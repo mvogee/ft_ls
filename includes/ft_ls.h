@@ -36,7 +36,8 @@ typedef struct		s_options
 	unsigned int option_a : 1;
 	unsigned int option_r : 1;
 	unsigned int option_t : 1;
-	unsigned int option_G : 1;
+	unsigned int option_G : 1; // bonus
+	unsigned int option_i : 1; // bonus
 	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 

@@ -32,6 +32,20 @@ void	throw_error(int reason, char *bad_info)
 	exit(EXIT_FAILURE);
 }
 
+// void	ft_ls(t_options	*options)
+// {
+// 	// make sure all the files in to_ls exist and can be reached from "."
+// 	// while we go through the files in options.to_ls
+// 	// get all the files names and store them.
+// 	// get all the information needed for the files
+// 	// depending on if a sorting option is given sort the files in correct order.
+// 	// go down the list of files displaying them with information based on what flags we have
+
+// 	// if the -R option is present v
+// 	// 		look for the first direcory in directory files
+// 	//		recurse ft_ls 
+// }
+
 int		main(int argc, char **argv)
 {
 	t_options	options;
@@ -40,10 +54,10 @@ int		main(int argc, char **argv)
 	get_options(argc, argv, &options); // make this. checks for options
 	if (!options.to_ls)
 		parse_directory(".", (&options.to_ls));
-
+//	ft_ls(&options);
 
 // printing stuff out
-	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G);
+	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i);
 // printing directories to list
 	t_to_ls 	*tmp = options.to_ls;
 	while (tmp)
