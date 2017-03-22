@@ -23,6 +23,12 @@ typedef enum		e_errors
 	NO_RIGHTS
 }					t_errors;
 
+typedef struct		s_to_ls
+{
+	struct s_to_ls	*next;
+	char			*name;
+}					t_to_ls;
+
 typedef struct		s_options
 {
 	unsigned int option_R : 1;
@@ -30,7 +36,7 @@ typedef struct		s_options
 	unsigned int option_a : 1;
 	unsigned int option_r : 1;
 	unsigned int option_t : 1;
-	char				**directories; // directories given to be the subjects to look in
+	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 
 # endif

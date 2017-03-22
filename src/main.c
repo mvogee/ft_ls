@@ -28,7 +28,7 @@ void	throw_error(int reason, char *bad_info)
 	}
 	// else if (reason == NO_RIGHTS)
 	// 	//print out ussage restriction message 
-	exit(EXIT_FAILURE);
+	// exit(EXIT_FAILURE);
 }
 
 void	parse_options(char *opt, t_options *options)
@@ -54,6 +54,27 @@ void	parse_options(char *opt, t_options *options)
 	}
 }
 
+void	parse_directory(char *file, t_to_ls	**to_ls)
+{
+	int 		len;
+	t_to_ls		*tmp;
+	t_to_ls		*new;
+
+	tmp = *to_ls;
+	len = ft_strlen(file);
+	new = (t_to_ls*)ft_memalloc(sizeof(t_to_ls));
+	new->name = file;
+	new->next = NULL;
+	if (!(*to_ls))
+		*to_ls = new;
+	else
+	{
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+}
+
 void	get_options(int argc, char **argv, t_options *options)
 {
 	int			count;
@@ -65,12 +86,14 @@ void	get_options(int argc, char **argv, t_options *options)
 	{
 		if (argv[count][0] == '-' && argv[count][1] != '\0' && type == 0)
 			parse_options(argv[count], options);
-		// else
-		// 	parse_directory(argv[count], options); // make this
+		else
+		{
+			type = 1;
+			parse_directory(argv[count], &options->to_ls);
+		}
 		count++;
 	}
 	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\n", options->option_l, options->option_R, options->option_a, options->option_r, options->option_t);
-
 }
 
 int		main(int argc, char **argv)
@@ -80,5 +103,11 @@ int		main(int argc, char **argv)
 	ft_bzero(&options, sizeof(t_options));
 	get_options(argc, argv, &options); // make this. checks for options
 
+	// t_to_ls 	*tmp = options.to_ls;
+	// while (tmp)
+	// {
+	// 	ft_printf("to_ls: %s\n", tmp->name);
+	// 	tmp = tmp->next;
+	// }
 	// once we have the options we need to get the files contained in the current directory
 }

@@ -49,4 +49,4 @@ fclean_libft:
 
 re: fclean all
 
-re_ls: fclean_ls $(NAME)
+re_ls: fclean_ls all
