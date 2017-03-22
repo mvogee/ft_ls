@@ -29,24 +29,31 @@ void	throw_error(int reason, char *bad_info)
 	// else if (reason == NO_RIGHTS)
 	// 	//print out ussage restriction message 
 
-	exit(EXIT_FAILURE);
+//	exit(EXIT_FAILURE); // we dont exit if there are more directories to check
 }
 
-void	ft_ls(t_options	*options)
+void	ft_ls(t_options	*options, t_to_ls *to_ls)
 {
 	t_outinfo_gen	outinfo_gen;
+	t_fileinfo		*files;
+	t_to_ls			*sub_dirs;
 
 	ft_bzero(&outinfo_gen, (sizeof(t_outinfo_gen)));
+	check_ls_paths(&to_ls); // Make this. print an error and remove the path if non existent
 	// make sure all the files in to_ls exist and can be reached from "."
-	// while we go through the files in options.to_ls
-	// get all the files names and store them.
-	// get all the information needed for the files. if premision is not allowed not that.
-	// depending on if a sorting option is given sort the files in correct order.
-	// go down the list of files displaying them with information based on what flags we have
-
-	// if the -R option is present v
-	// 		look for the first direcory in directory files
-	//		recurse ft_ls 
+	while (to_ls)
+	{ // get_files_info is where most of the magic will be happening
+		files = get_files_info(options, to_ls->name); // make this. should sort correctly as it goes. if premision is not allowed note that.
+		ouput_info(files); // make this. needs to ouput all the file information correclty
+		// recurse here if we have -R
+		if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
+		{
+			sub_dirs = get_sub_dirs(files); // make this. if no directories found return NULL
+			if (sub_dirs)
+				ft_ls(option, sub_dirs); // recursion. make sure this is sage
+		}
+		to_ls = to_ls->next;
+	}
 }
 
 int		main(int argc, char **argv)
@@ -57,7 +64,7 @@ int		main(int argc, char **argv)
 	get_options(argc, argv, &options); // make this. checks for options
 	if (!options.to_ls)
 		parse_directory(".", (&options.to_ls));
-//	ft_ls(&options);
+	ft_ls(&options, optons.to_ls);
 
 // printing stuff out
 	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF:", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i, options.option_F);

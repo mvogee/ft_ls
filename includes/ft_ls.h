@@ -42,7 +42,7 @@ typedef struct		s_fileinfo
 	struct s_fileinfo	*next;
 	char				*filename;
 	unsigned int		serial; // st_ino
-	char				rights[12]; // st_mode
+	char				rights[12]; // st_mode // extract the string
 	unsigned int		links; // st_nlink
 	unsigned int		owner_name; //st_uid
 	unsigned int		group_name; //st_gid
