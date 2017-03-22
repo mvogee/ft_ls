@@ -33,6 +33,8 @@ void			parse_options(char *opt, t_options *options)
 			options->option_i = 1;
 		else if (opt[i] == 'G')
 			options->option_G = 1;
+		else if (opt[i] == 'F')
+			options->option_F = 1;
 		else
 			throw_error(INVALID_OPTION, opt + i);
 		i++;

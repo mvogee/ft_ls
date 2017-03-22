@@ -29,6 +29,28 @@ typedef struct		s_to_ls
 	char			*name;
 }					t_to_ls;
 
+typedef struct 		s_outinfo_general // to be used for all outputting for minimum width for respecive fields
+{ // set each of these to the largest for each ouput set
+	int 			serial_min_wid;
+	int				links_min_wid;
+	int				user_min_wid;
+	int				group_min_wid;
+}					t_outinfo_gen;
+
+typedef struct		s_fileinfo
+{
+	struct s_fileinfo	*next;
+	char				*filename;
+	unsigned int		serial; // st_ino
+	char				rights[12]; // st_mode
+	unsigned int		links; // st_nlink
+	unsigned int		owner_name; //st_uid
+	unsigned int		group_name; //st_gid
+	unsigned int		devide_type; // st_rdev
+	unsigned int		size_bytes; // st_size
+	char				last_mod[13] // will be created from timespecs
+}					t_fileinfo;
+
 typedef struct		s_options
 {
 	unsigned int option_R : 1;
@@ -38,6 +60,7 @@ typedef struct		s_options
 	unsigned int option_t : 1;
 	unsigned int option_G : 1; // bonus
 	unsigned int option_i : 1; // bonus
+	unsigned int option_F : 1; // bonus
 	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 

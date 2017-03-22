@@ -32,19 +32,22 @@ void	throw_error(int reason, char *bad_info)
 	exit(EXIT_FAILURE);
 }
 
-// void	ft_ls(t_options	*options)
-// {
-// 	// make sure all the files in to_ls exist and can be reached from "."
-// 	// while we go through the files in options.to_ls
-// 	// get all the files names and store them.
-// 	// get all the information needed for the files
-// 	// depending on if a sorting option is given sort the files in correct order.
-// 	// go down the list of files displaying them with information based on what flags we have
+void	ft_ls(t_options	*options)
+{
+	t_outinfo_gen	outinfo_gen;
 
-// 	// if the -R option is present v
-// 	// 		look for the first direcory in directory files
-// 	//		recurse ft_ls 
-// }
+	ft_bzero(&outinfo_gen, (sizeof(t_outinfo_gen)));
+	// make sure all the files in to_ls exist and can be reached from "."
+	// while we go through the files in options.to_ls
+	// get all the files names and store them.
+	// get all the information needed for the files. if premision is not allowed not that.
+	// depending on if a sorting option is given sort the files in correct order.
+	// go down the list of files displaying them with information based on what flags we have
+
+	// if the -R option is present v
+	// 		look for the first direcory in directory files
+	//		recurse ft_ls 
+}
 
 int		main(int argc, char **argv)
 {
@@ -57,7 +60,7 @@ int		main(int argc, char **argv)
 //	ft_ls(&options);
 
 // printing stuff out
-	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i);
+	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF:", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i, options.option_F);
 // printing directories to list
 	t_to_ls 	*tmp = options.to_ls;
 	while (tmp)
