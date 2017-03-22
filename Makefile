@@ -1,6 +1,7 @@
 NAME = ft_ls
 
 SRCS = ./src/main.c \
+		./src/parse_options.c \
 
 OBJ = $(SRC:.c=.o)
 

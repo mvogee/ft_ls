@@ -39,4 +39,18 @@ typedef struct		s_options
 	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 
+/*
+** main.c
+*/
+
+void	throw_error(int reason, char *bad_info);
+
+/*
+** parse_options.c
+*/
+
+void	parse_options(char *opt, t_options *options);
+void	parse_directory(char *file, t_to_ls	**to_ls);
+void	get_options(int argc, char **argv, t_options *options);
+
 # endif
