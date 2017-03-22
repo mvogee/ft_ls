@@ -41,8 +41,9 @@ int		main(int argc, char **argv)
 	if (!options.to_ls)
 		parse_directory(".", (&options.to_ls));
 
-	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t);
 
+// printing stuff out
+	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G);
 // printing directories to list
 	t_to_ls 	*tmp = options.to_ls;
 	while (tmp)
@@ -51,4 +52,5 @@ int		main(int argc, char **argv)
 		tmp = tmp->next;
 	}
 	// once we have the options we need to get the files contained in the current directory
+	return (0);
 }
