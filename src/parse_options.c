@@ -90,6 +90,15 @@ void			get_options(int argc, char **argv, t_options *options)
 
 	count = 1;
 	type = 0;
+	if (count < argc)
+	{
+		if (argv[1][0] == '-' && argv[1][1] == '-' && (argv[1][2] == '\0' ||
+			argv[1][2] == ' '))
+		{
+			type = 1;
+			count++;
+		}
+	}
 	while (count < argc)
 	{
 		if (argv[count][0] == '-' && argv[count][1] != '\0' && type == 0)
