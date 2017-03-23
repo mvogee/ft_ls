@@ -15,6 +15,13 @@
 
 # include "ft_printf.h"
 # include "libft.h"
+# include <sys/types.h>
+# include <sys/dir.h>
+# include <dirent.h>
+# include <sys/stat.h>
+# include <time.h>
+# include <sys/xattr.h>
+# include <pwd.h>
 
 typedef enum		e_errors
 {
@@ -40,15 +47,19 @@ typedef struct 		s_outinfo_general // to be used for all outputting for minimum 
 typedef struct		s_fileinfo
 {
 	struct s_fileinfo	*next;
+	DIR					*directory;
+	struct dirent		*dp;
+	struct stat			st;
+	//struct passwd 		*password;
 	char				*filename;
-	unsigned int		serial; // st_ino
+	// unsigned int		serial; // st_ino
 	char				rights[12]; // st_mode // extract the string
-	unsigned int		links; // st_nlink
-	unsigned int		owner_name; //st_uid
-	unsigned int		group_name; //st_gid
-	unsigned int		devide_type; // st_rdev
-	unsigned int		size_bytes; // st_size
-	char				last_mod[13] // will be created from timespecs
+	// unsigned int		links; // st_nlink
+	char				*owner_name; //st_uid
+	char				*group_name; //st_gid
+	// unsigned int		devide_type; // st_rdev
+	// unsigned int		size_bytes; // st_size
+	// char				last_mod[13] // will be created from timespecs
 }					t_fileinfo;
 
 typedef struct		s_options
@@ -61,6 +72,7 @@ typedef struct		s_options
 	unsigned int option_G : 1; // bonus
 	unsigned int option_i : 1; // bonus
 	unsigned int option_F : 1; // bonus
+	unsigned int option_f : 1; // bonus
 	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 
