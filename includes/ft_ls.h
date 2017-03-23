@@ -90,4 +90,11 @@ void	parse_options(char *opt, t_options *options);
 void	parse_directory(char *file, t_to_ls	**to_ls);
 void	get_options(int argc, char **argv, t_options *options);
 
+/*
+** check_ls_paths.c
+*/
+
+// static t_to_ls	*bad_path(t_to_ls **to_ls, t_to_ls *bad_path)
+void			check_ls_paths(t_to_ls **to_ls);
+
 # endif

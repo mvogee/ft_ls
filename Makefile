@@ -2,6 +2,7 @@ NAME = ft_ls
 
 SRCS = ./src/main.c \
 		./src/parse_options.c \
+		./src/check_ls_paths.c \
 
 OBJ = $(SRC:.c=.o)
 

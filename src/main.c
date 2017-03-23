@@ -19,7 +19,7 @@ void	throw_error(int reason, char *bad_info)
 	{
 		write(2, "illegal option -- ", 19);
 		write(2, &bad_info[0], 1);
-		write(2, "\nusage: ls [-aRrlt] [file ...]\n", 31);
+		write(2, "\nusage: ls [-aRFfGilrt] [file ...]\n", 36);
 	}
 	// else if (reason == NO_FILE) // call ls if there are still files to ls
 	// {
@@ -29,63 +29,13 @@ void	throw_error(int reason, char *bad_info)
 	// else if (reason == NO_RIGHTS)
 	// 	//print out ussage restriction message 
 
-//	exit(EXIT_FAILURE); // we dont exit if there are more directories to check
+	exit(EXIT_FAILURE); // we dont exit if there are more directories to check
 }
 
 // t_fileinfo	*get_files_info(t_options *options, char *filesfrom)
 // {
 // 	// make this after check_ls_paths
 // }
-
-t_to_ls	*bad_path(t_to_ls **to_ls, t_to_ls *bad_path)
-{
-	t_to_ls		*prev;
-	t_to_ls		*head;
-
-	head = *to_ls;
-	if (!bad_path)
-		return (NULL);
-	if (ft_strequ(bad_path->name, head->name))
-		head = head->next;
-	else
-	{
-		prev = head;
-		while (!ft_strequ(bad_path->name ,prev->next->name))
-			prev = prev->next;
-		prev->next = bad_path->next;
-	}
-	ft_memdel((void**)bad_path);
-	return (head);
-}
-
-void	check_ls_paths(t_to_ls **to_ls)
-{
-	t_to_ls		*tmp;
-	t_to_ls		*next;
-	DIR			*d;
-
-	tmp = *to_ls;
-	while (tmp)
-	{
-		d = opendir(tmp->name);
-		if (!d)
-		{
-			next = tmp->next;
-			write(2, "ft_ls: ", 8);
-			write(2, tmp->name, ft_strlen(tmp->name) + 1);
-			write(2, ": No such file or directory\n", 29);
-			*to_ls = bad_path(to_ls, tmp); // make this. removes tmp link from list
-			tmp = next;
-		}
-		else
-		{
-			free(d);
-			tmp = tmp->next;
-		}
-	}
-	if (!(*to_ls))
-		exit(EXIT_FAILURE);
-}
 
 void	ft_ls(t_options	*options, t_to_ls **to_ls)
 {
