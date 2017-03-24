@@ -29,14 +29,16 @@ void			parse_options(char *opt, t_options *options)
 			options->option_r = 1;
 		else if (opt[i] == 't')
 			options->option_t = 1;
-		else if (opt[i] == 'i') // bonus
+		else if (opt[i] == 'i') // bonus. cerial number
 			options->option_i = 1;
-		else if (opt[i] == 'G') // bonus
+		else if (opt[i] == 'G') // bonus. collor
 			options->option_G = 1;
-		else if (opt[i] == 'F') // bonus
+		else if (opt[i] == 'F') // bonus. file names followed by symbol
 			options->option_F = 1;
-		else if (opt[i] == 'f') // bonus
+		else if (opt[i] == 'f') // bonus. unsorted order
 			options->option_f = 1;
+		else if (opt[i] == 'n') // bonus. display user and group as number
+			options->option_n = 1;
 		else
 			throw_error(INVALID_OPTION, opt + i);
 		i++;

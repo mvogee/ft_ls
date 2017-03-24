@@ -22,6 +22,7 @@
 # include <time.h>
 # include <sys/xattr.h>
 # include <pwd.h>
+#include <sys/acl.h>
 
 typedef enum		e_errors
 {
@@ -38,6 +39,7 @@ typedef struct		s_to_ls
 
 typedef struct 		s_outinfo_general // to be used for all outputting for minimum width for respecive fields
 { // set each of these to the largest for each ouput set
+	char			*curfile;
 	int 			serial_min_wid;
 	int				links_min_wid;
 	int				user_min_wid;
@@ -47,9 +49,9 @@ typedef struct 		s_outinfo_general // to be used for all outputting for minimum 
 typedef struct		s_fileinfo
 {
 	struct s_fileinfo	*next;
-	DIR					*directory;
-	struct dirent		*dp;
-	struct stat			st;
+//	DIR					*dir;
+//	struct dirent		*dp;
+	struct stat			*st;
 	//struct passwd 		*password;
 	char				*filename;
 	// unsigned int		serial; // st_ino
@@ -64,15 +66,16 @@ typedef struct		s_fileinfo
 
 typedef struct		s_options
 {
-	unsigned int option_R : 1;
-	unsigned int option_l : 1;
-	unsigned int option_a : 1;
-	unsigned int option_r : 1;
-	unsigned int option_t : 1;
-	unsigned int option_G : 1; // bonus
-	unsigned int option_i : 1; // bonus
-	unsigned int option_F : 1; // bonus
-	unsigned int option_f : 1; // bonus
+	unsigned int option_R : 1; // recrusive listing
+	unsigned int option_l : 1; // extended info
+	unsigned int option_a : 1; // include hidden files
+	unsigned int option_r : 1; // reverse order
+	unsigned int option_t : 1; // mod time sort
+	unsigned int option_G : 1; // bonus collor
+	unsigned int option_i : 1; // bonus cerial number
+	unsigned int option_F : 1; // bonus file names followed by symbol
+	unsigned int option_f : 1; // bonus unsorted order
+	unsigned int option_n : 1; // bonus display user and group as number
 	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
 
