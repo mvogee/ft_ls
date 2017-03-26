@@ -103,4 +103,10 @@ void	get_options(int argc, char **argv, t_options *options);
 // static t_to_ls	*bad_path(t_to_ls **to_ls, t_to_ls *bad_path)
 void			check_ls_paths(t_to_ls **to_ls);
 
+/*
+** output.c
+*/
+
+void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi);
+
 # endif

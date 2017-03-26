@@ -363,7 +363,7 @@ void	ft_ls(t_options	*options, t_to_ls **to_ls)
 	while (tmp)
 	{ // get_files_info is where most of the magic will be happening
 		files = get_files_info(options, tmp->name, &outinfo_gen); // make this. should sort correctly as it goes. if premision is not allowed note that.
-		ouput_info(files); // make this. needs to ouput all the file information correclty
+		output_info(files, options, &outinfo_gen); // make this. needs to ouput all the file information correclty
 		// recurse here if we have -R
 		// if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
 		// {
@@ -373,12 +373,12 @@ void	ft_ls(t_options	*options, t_to_ls **to_ls)
 		// }
 		tmp = tmp->next;
 	}
-	t_fileinfo	*tmpp = files;
-	while (tmpp)
-	{
-		ft_printf("%s	%s	%s	%s\n", tmpp->filename, tmpp->rights, tmpp->owner_name, tmpp->group_name);
-		tmpp = tmpp->next;
-	}
+	// t_fileinfo	*tmpp = files;
+	// while (tmpp)
+	// {
+	// 	ft_printf("%s	%s	%s	%s\n", tmpp->filename, tmpp->rights, tmpp->owner_name, tmpp->group_name);
+	// 	tmpp = tmpp->next;
+	// }
 }
 
 int		main(int argc, char **argv)
