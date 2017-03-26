@@ -36,7 +36,10 @@ void			parse_options(char *opt, t_options *options)
 		else if (opt[i] == 'F') // bonus. file names followed by symbol
 			options->option_F = 1;
 		else if (opt[i] == 'f') // bonus. unsorted order
-			options->option_f = 1;
+			{
+				options->option_f = 1;
+				options->option_a = 1;
+			}
 		else if (opt[i] == 'n') // bonus. display user and group as number
 			options->option_n = 1;
 		else

@@ -22,7 +22,8 @@
 # include <time.h>
 # include <sys/xattr.h>
 # include <pwd.h>
-#include <sys/acl.h>
+# include <sys/acl.h>
+# include <grp.h>
 
 typedef enum		e_errors
 {
@@ -40,10 +41,12 @@ typedef struct		s_to_ls
 typedef struct 		s_outinfo_general // to be used for all outputting for minimum width for respecive fields
 { // set each of these to the largest for each ouput set
 	char			*curfile;
+	char			*filepath;
 	int 			serial_min_wid;
 	int				links_min_wid;
 	int				user_min_wid;
 	int				group_min_wid;
+	int				file_size;
 }					t_outinfo_gen;
 
 typedef struct		s_fileinfo
@@ -71,8 +74,8 @@ typedef struct		s_options
 	unsigned int option_a : 1; // include hidden files
 	unsigned int option_r : 1; // reverse order
 	unsigned int option_t : 1; // mod time sort
-	unsigned int option_G : 1; // bonus collor
-	unsigned int option_i : 1; // bonus cerial number
+	unsigned int option_G : 1; // bonus color
+	unsigned int option_i : 1; // bonus serial number
 	unsigned int option_F : 1; // bonus file names followed by symbol
 	unsigned int option_f : 1; // bonus unsorted order
 	unsigned int option_n : 1; // bonus display user and group as number
