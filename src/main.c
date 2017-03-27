@@ -67,7 +67,7 @@ char		get_filetype(struct stat *st)
 	filetype = st->st_mode & S_IFMT;
 	if (filetype == S_IFREG)
 		return ('-');
-	else if (filetype == S_IFBLK) // do we need all the extra ones besides - and d?
+	else if (filetype == S_IFBLK)
 		return ('b');
 	else if (filetype == S_IFCHR)
 		return ('c');
@@ -208,35 +208,6 @@ t_fileinfo	*sort_default(t_fileinfo **files, t_fileinfo *new_file)
 		new_file->next = tmp;
 	}
 	return (head);
-}
-
-int			conv_month(char *month)
-{
-	if (month[0] == 'J' && month[1] == 'a' && month[2] == 'n')
-		return (1);
-	else if (month[0] == 'F' && month[1] == 'e' && month[2] == 'b')
-		return (2);
-	else if (month[0] == 'M' && month[1] == 'a' && month[2] == 'r')
-		return (3);
-	else if (month[0] == 'A' && month[1] == 'p' && month[2] == 'r')
-		return (4);
-	else if (month[0] == 'M' && month[1] == 'a' && month[2] == 'y')
-		return (5);
-	else if (month[0] == 'J' && month[1] == 'u' && month[2] == 'n')
-		return (6);
-	else if (month[0] == 'J' && month[1] == 'u' && month[2] == 'l')
-		return (7);
-	else if (month[0] == 'A' && month[1] == 'u' && month[2] == 'g')
-		return (8);
-	else if (month[0] == 'S' && month[1] == 'e' && month[2] == 'p')
-		return (9);
-	else if (month[0] == 'O' && month[1] == 'c' && month[2] == 't')
-		return (10);
-	else if (month[0] == 'N' && month[1] == 'o' && month[2] == 'v')
-		return (11);
-	else if (month[0] == 'D' && month[1] == 'e' && month[2] == 'c')
-		return (12);
-	return (0);
 }
 
 int 		compare_dates(struct stat *newst, struct stat *tmpst) //char *new_date, char	*tmp_date

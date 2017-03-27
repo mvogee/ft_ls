@@ -29,7 +29,7 @@ void			parse_options(char *opt, t_options *options)
 			options->option_r = 1;
 		else if (opt[i] == 't')
 			options->option_t = 1;
-		else if (opt[i] == 'i') // bonus. cerial number
+		else if (opt[i] == 'i') // bonus. serial number
 			options->option_i = 1;
 		else if (opt[i] == 'G') // bonus. collor
 			options->option_G = 1;

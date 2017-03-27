@@ -25,6 +25,8 @@
 # include <sys/acl.h>
 # include <grp.h>
 
+# define SIX_MONTHS 15552000
+
 typedef enum		e_errors
 {
 	INVALID_OPTION,
