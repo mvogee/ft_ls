@@ -17,10 +17,10 @@ void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 	t_fileinfo *tmp;
 
 	tmp = files;
-	if (optons->option_G)
-		output_color(files, options, oi); // make this
-	else
-	{ // move all this to other funciton
+	// if (optons->option_G)
+	// 	output_color(files, options, oi); // make this
+	// else
+	// { // move all this to other funciton
 	while (tmp)
 	{
 		if (tmp->filename[0] == '.' && !options->option_a)
