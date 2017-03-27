@@ -363,14 +363,14 @@ int		main(int argc, char **argv)
 	ft_ls(&options, &options.to_ls);
 
 // printing stuff out
-	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i, options.option_F);
+//	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i, options.option_F);
 // printing directories to list
-	t_to_ls 	*tmp = options.to_ls;
-	while (tmp)
-	{
-		ft_printf("to_ls: %s\n", tmp->name);
-		tmp = tmp->next;
-	}
+	// t_to_ls 	*tmp = options.to_ls;
+	// while (tmp)
+	// {
+	// 	ft_printf("to_ls: %s\n", tmp->name);
+	// 	tmp = tmp->next;
+	// }
 	// once we have the options we need to get the files contained in the current directory
 	return (0);
 }

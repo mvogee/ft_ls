@@ -12,18 +12,6 @@
 
 #include "ft_ls.h"
 
-// void	output_rights(t_fileinfo *file, t_options *options, t_outinfo_gen *oi)
-// {
-// 	// if (options->option_F) this prints at the very end
-// 	// {
-// 	// 	if(file->rights[0] == 'd')
-// 	// 		write(1, "/ ", 2);
-// 	// 	else if (ft_findchr(file->rights, 'x') >= 0)
-// 	// 		write(1, "* ", 2);
-// 	// 	else if
-// 	// }
-// }
-
 void	output_date(t_fileinfo *file)
 {
 	time_t	curtime;
@@ -47,15 +35,31 @@ void	output_date(t_fileinfo *file)
 		free(p2);
 }
 
+void	output_file_symbol(char rights[12], char *filename)
+{
+	if (rights[0] == 'd')
+		write(1, "/", 1);
+	else if (rights[3] == 'x' || rights[6] == 'x' || rights[9] == 'x')
+		write(1, "*", 1);
+	else if (rights[0] == 'l')
+		write(1, "@", 1);
+	else if (rights[0] == 's')
+		write(1, "=", 1);
+	else if (!filename || *filename == '\0')
+		write(1, "%", 1);
+	else if (rights[0] == 'p')
+		write(1, "|", 1);
+}
+
 void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 {
 	t_fileinfo *tmp;
 
 	tmp = files;
-//	if (optons->option_G)
-//		output_color(files, options, oi); // make this
-//	else
-//	{ // move all this to other funciton
+	// if (optons->option_G)
+	// 	output_color(files, options, oi); // make this
+	// else
+	// { // move all this to other funciton
 	while (tmp)
 	{
 		if (tmp->filename[0] == '.' && !options->option_a)
@@ -66,19 +70,18 @@ void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 		if (options->option_i)
 			ft_printf("%*llu ", oi->serial_min_wid ,tmp->st->st_ino);
 		if (options->option_l)
-		{ // need to take into account all the flags for special output as well.
-			//output_total_blocks(); // make this
-			ft_printf("%s ", files->rights);
-			ft_printf("%*d ", oi->links_min_wid, tmp->st->st_nlink);
-			(options->option_n ? ft_printf("%d  %d ", tmp->st->st_uid, tmp->st->st_gid) :
-				ft_printf("%*s  %*s ",  oi->user_min_wid, tmp->owner_name, oi->group_min_wid, tmp->group_name));
+		{
+			ft_printf("%s %*d ", tmp->rights, oi->links_min_wid, tmp->st->st_nlink);
+			if (!options->option_n)
+				ft_printf("%*s  %*s ",  oi->user_min_wid, tmp->owner_name, oi->group_min_wid, tmp->group_name);
+			else
+				ft_printf("%d  %d ",  tmp->st->st_uid, tmp->st->st_gid);
 			ft_printf(" %*lld ", oi->file_size, tmp->st->st_size);
-			output_date(tmp); // make this
-			// here figure out if you need to print system number things instead of links
+			output_date(tmp);
 		}
 		ft_printf("%s", tmp->filename);
-		// if (options->option_F)
-		// 	output_file_symbol(tmp, options, oi);
+		if (options->option_F)
+			output_file_symbol(tmp->rights, tmp->filename);
 		ft_printf("\n");
 		tmp = tmp->next;
 	}
