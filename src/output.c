@@ -35,19 +35,20 @@ void	output_date(t_fileinfo *file)
 		free(p2);
 }
 
-void	output_file_symbol(char rights[12], char *filename)
+void	output_file_symbol(t_fileinfo *file)
 {
-	if (rights[0] == 'd')
+	if ((file->st->st_mode & S_IFMT) == S_IFDIR)
 		write(1, "/", 1);
-	else if (rights[3] == 'x' || rights[6] == 'x' || rights[9] == 'x')
+	else if (file->st->st_mode & S_IXUSR ||
+		file->st->st_mode & S_IXGRP || file->st->st_mode & S_IXOTH)
 		write(1, "*", 1);
-	else if (rights[0] == 'l')
+	else if ((file->st->st_mode & S_IFMT) == S_IFLNK)
 		write(1, "@", 1);
-	else if (rights[0] == 's')
+	else if ((file->st->st_mode & S_IFMT) == S_IFSOCK)
 		write(1, "=", 1);
-	else if (!filename || *filename == '\0')
+	else if (!file->filename || file->filename == '\0')
 		write(1, "%", 1);
-	else if (rights[0] == 'p')
+	else if ((file->st->st_mode & S_IFMT) == S_IFIFO)
 		write(1, "|", 1);
 }
 
@@ -55,7 +56,6 @@ void	print_blocksize(t_fileinfo *files, t_options *options)
 {
 	t_fileinfo	*tmp;
 	blkcnt_t	total;
-
 
 	tmp = files;
 	total = 0;
@@ -177,13 +177,14 @@ void	output_info(t_to_ls *directory, t_all *all)
 				output_user_group_names(all->format, tmp); // done
 			else
 				ft_printf("%d  %d ",  tmp->st->st_uid, tmp->st->st_gid);
+			// make function that either prints filesize or system informations
 			ft_printf(" %*lld ", all->format->file_size, tmp->st->st_size);
 			output_date(tmp);
 		}
 //		output_name_or_links(tmp, directory); // make this
 		ft_printf("%s", tmp->filename);
-		// if (all->options->option_F)
-		// 	output_file_symbol(tmp->rights, tmp->filename);
+		if (all->options->option_F)
+			output_file_symbol(tmp);
 		ft_printf("\n");
 		tmp = tmp->next;
 	}
