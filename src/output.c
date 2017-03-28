@@ -28,7 +28,7 @@ void	output_date(t_fileinfo *file)
 		p2 = ft_strsub(ctime(&file->st->st_mtime), 20, 4);
 	else
 		p2 = ft_strsub(ctime(&file->st->st_mtime), 11, 5);
-	ft_printf("%s %5s ", filetime, p2); // this needs formattings
+	ft_printf("%s %5s ", filetime, p2);
 	if (filetime)
 		free(filetime);
 	if (p2)
@@ -80,36 +80,110 @@ void	print_blocksize(t_fileinfo *files, t_options *options)
 // 	}
 // }
 
-void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
+void	ouput_filetype(t_fileinfo *file)
+{
+	int filetype;
+
+	filetype = file->st->st_mode & S_IFMT;
+	if (filetype == S_IFREG)
+		write(1, "-", 1);
+	else if (filetype == S_IFBLK)
+		write(1, "b", 1);
+	else if (filetype == S_IFCHR)
+		write(1, "c", 1);
+	else if (filetype == S_IFDIR)
+		write(1, "d", 1);
+	else if (filetype == S_IFIFO)
+		write(1, "p", 1);
+	else if (filetype == S_IFLNK)
+		write(1, "l", 1);
+	else if (filetype == S_IFSOCK)
+		write(1, "s", 1);
+	else
+		write(1, "-", 1);
+}
+
+void	output_extended(t_fileinfo *file)
+{
+	acl_t		acl;
+	acl_entry_t	acl_e;
+	ssize_t		xattr;
+
+	acl = NULL;
+	xattr = 0;
+	acl = acl_get_link_np(file->path, ACL_TYPE_EXTENDED);
+	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &acl_e) == -1)
+	{
+		acl_free(acl);
+		acl = NULL;
+	}
+	xattr = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
+	if (xattr > 0)
+		write (1, "@", 1);
+	else if (acl != NULL)
+		write(1, "+", 1);
+	else
+		write(1, " ", 1);
+}
+
+void	output_premissions(t_fileinfo *file)
+{
+	ouput_filetype(file);
+	(file->st->st_mode & S_IRUSR ? write(1, "r", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IWUSR ? write(1, "w", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IXUSR ? write(1, "x", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IRGRP ? write(1, "r", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IWGRP ? write(1, "w", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IXGRP ? write(1, "x", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IROTH ? write(1, "r", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IWOTH ? write(1, "w", 1) : write(1, "-", 1));
+	(file->st->st_mode & S_IXOTH ? write(1, "x", 1) : write(1, "-", 1));
+	output_extended(file);
+
+}
+
+void	output_user_group_names(t_format *format, t_fileinfo *file)
+{
+	struct group	*grp;
+	struct passwd	*pd;
+
+	pd = getpwuid(file->st->st_uid);
+	grp = getgrgid(file->st->st_gid);
+	ft_printf("%*s  ", format->user_min_wid, pd->pw_name);
+	ft_printf("%*s ", format->group_min_wid, grp->gr_name);
+}
+
+void	output_info(t_to_ls *directory, t_all *all)
 {
 	t_fileinfo *tmp;
 
-	tmp = files;
-	if (options->option_l)
-		print_blocksize(files, options);
+	tmp = all->files;
+	if (all->print_dir)
+		ft_printf("%s\n", directory->name);
+	if (all->options->option_l)
+		print_blocksize(all->files, all->options);
+	// if (all->options->option_G)
+	// 	output_in_color(tmp, all, directory); // make this
+	// else all this VV
 	while (tmp)
 	{
-		if (tmp->filename[0] == '.' && !options->option_a)
+		if (all->options->option_i)
+			ft_printf("%*llu ", all->format->serial_min_wid ,tmp->st->st_ino);
+		if (all->options->option_l)
 		{
-			tmp = tmp->next;
-			continue;
-		}
-		if (options->option_i)
-			ft_printf("%*llu ", oi->serial_min_wid ,tmp->st->st_ino);
-		if (options->option_l)
-		{
-			ft_printf("%s %*d ", tmp->rights, oi->links_min_wid, tmp->st->st_nlink);
-			if (!options->option_n)
-				ft_printf("%*s  %*s ",  oi->user_min_wid, tmp->owner_name, oi->group_min_wid, tmp->group_name);
+			output_premissions(tmp); // done
+			ft_printf(" %*d ", all->format->links_min_wid, tmp->st->st_nlink);
+			if (!all->options->option_n)
+				output_user_group_names(all->format, tmp); // done
 			else
 				ft_printf("%d  %d ",  tmp->st->st_uid, tmp->st->st_gid);
-			ft_printf(" %*lld ", oi->file_size, tmp->st->st_size);
+			ft_printf(" %*lld ", all->format->file_size, tmp->st->st_size);
 			output_date(tmp);
 		}
-//		output_name(tmp, options);
+//		output_name_or_links(tmp, directory); // make this
 		ft_printf("%s", tmp->filename);
-		if (options->option_F)
-			output_file_symbol(tmp->rights, tmp->filename);
+		// if (all->options->option_F)
+		// 	output_file_symbol(tmp->rights, tmp->filename);
 		ft_printf("\n");
 		tmp = tmp->next;
 	}

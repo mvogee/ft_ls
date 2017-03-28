@@ -61,29 +61,6 @@ int		group_width(struct stat *st, t_format *format)
 	return (format->group_min_wid);
 }
 
-char		get_filetype(struct stat *st)
-{
-	int filetype;
-
-	filetype = st->st_mode & S_IFMT;
-	if (filetype == S_IFREG)
-		return ('-');
-	else if (filetype == S_IFBLK)
-		return ('b');
-	else if (filetype == S_IFCHR)
-		return ('c');
-	else if (filetype == S_IFDIR)
-		return ('d');
-	else if (filetype == S_IFIFO)
-		return ('p');
-	else if (filetype == S_IFLNK)
-		return ('l');
-	else if (filetype == S_IFSOCK)
-		return ('s');
-	else
-		return ('-');
-}
-
 // char		get_extended(t_outinfo_gen *outinfo_gen)
 // {
 // 	acl_t		acl;
@@ -300,7 +277,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 	while ((dirptr = readdir(dir)))
 	{
 		to_ls->path = get_file_path(to_ls->name, dirptr->d_name); // should be good
-		ft_printf("to_ls->path: %s\n", to_ls->path);
+//		ft_printf("to_ls->path: %s\n", to_ls->path);
 		st = (struct stat*)ft_memalloc(sizeof(struct stat));
 		if (/*lstat(dirptr->d_name, st) == 0 || */lstat(to_ls->path, st) == 0) // this might change slightly
 		{
@@ -320,7 +297,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 void	ft_ls(t_all	*all)
 {
 	t_to_ls			*tmp;
-	t_fileinfo		*files;
+//	t_fileinfo		*files;
 	//t_to_ls			*sub_dirs;
 
 	all->format = (t_format*)ft_memalloc(sizeof(t_format));
@@ -328,11 +305,12 @@ void	ft_ls(t_all	*all)
 		return ;
 	check_ls_paths(&all->to_ls);
 	tmp = all->to_ls;
-	// make sure all the files in to_ls exist and can be reached from "."
+	if (tmp->next)
+		all->print_dir = 1;
 	while (tmp)
-	{ // get_files_info is where most of the magic will be happening
-		files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
-	//	output_info(files, options, &all->format); // make this. needs to ouput all the file information correclty
+	{
+		all->files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
+		output_info(tmp, all); // make this. needs to ouput all the file information correclty
 		// recurse here if we have -R
 		// if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
 		// {
@@ -341,13 +319,14 @@ void	ft_ls(t_all	*all)
 		// 		ft_ls(option, sub_dirs); // recursion. make sure this is safe
 		// }
 		tmp = tmp->next;
+		ft_printf("\n");
 	}
-	t_fileinfo	*tmpp = files;
-	while (tmpp)
-	{
-		ft_printf("%s\n", tmpp->filename);
-		tmpp = tmpp->next;
-	}
+	// t_fileinfo	*tmpp = all->files;
+	// while (tmpp)
+	// {
+	// 	ft_printf("%s\n", tmpp->filename);
+	// 	tmpp = tmpp->next;
+	// }
 }
 
 int		main(int argc, char **argv)

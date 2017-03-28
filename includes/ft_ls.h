@@ -82,6 +82,7 @@ typedef struct 		s_all
 	t_options		*options;
 	t_format		*format;
 	char			*filename;
+	unsigned int	print_dir : 1;
 }					t_all;
 
 /*
@@ -109,6 +110,6 @@ void			check_ls_paths(t_to_ls **to_ls);
 ** output.c
 */
 
-//void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi);
+void	output_info(t_to_ls *directory, t_all *all);
 
 # endif
