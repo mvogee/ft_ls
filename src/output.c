@@ -51,11 +51,34 @@ void	output_file_symbol(char rights[12], char *filename)
 		write(1, "|", 1);
 }
 
+void	print_blocksize(t_fileinfo *files, t_options *options)
+{
+	t_fileinfo	*tmp;
+	blkcnt_t	total;
+
+
+	tmp = files;
+	total = 0;
+	while (tmp)
+	{
+		if (tmp->filename[0] == '.' && !options->option_a)
+		{
+			tmp = tmp->next;
+			continue ;
+		}
+		total += tmp->st->st_blocks;
+		tmp = tmp->next;
+	}
+	ft_printf("total %zu\n", total);
+}
+
 void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 {
 	t_fileinfo *tmp;
 
 	tmp = files;
+	if (options->option_l)
+		print_blocksize(files, options);
 	// if (optons->option_G)
 	// 	output_color(files, options, oi); // make this
 	// else
