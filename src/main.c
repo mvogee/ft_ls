@@ -233,7 +233,7 @@ void	add_new_file(t_fileinfo **files, struct stat *st, t_all *all, t_to_ls *to_l
 
 	new_file = (t_fileinfo*)ft_memalloc(sizeof(t_fileinfo));
 	new_file->st = st;
-	new_file->filename = all->filename;
+	new_file->filename = ft_strdup(all->filename); // this is now allocated memmory
 	new_file->path = to_ls->path; // this is allocated memmory in to_ls
 	new_file->next = NULL;
 	field_widths(all->format, new_file);
@@ -279,7 +279,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 		to_ls->path = get_file_path(to_ls->name, dirptr->d_name); // should be good
 //		ft_printf("to_ls->path: %s\n", to_ls->path);
 		st = (struct stat*)ft_memalloc(sizeof(struct stat));
-		if (/*lstat(dirptr->d_name, st) == 0 || */lstat(to_ls->path, st) == 0) // this might change slightly
+		if (lstat(to_ls->path, st) == 0)
 		{
 			all->filename = dirptr->d_name;
 			if (dirptr->d_name[0] == '.' && !all->options->option_a)
