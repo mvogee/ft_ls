@@ -31,8 +31,9 @@ void	throw_error(int reason, char *bad_info)
 
 	exit(EXIT_FAILURE); // we dont exit if there are more directories to check
 }
+
 // \/___________ gets ____________ \/
-char		*get_owner(struct stat *st, t_outinfo_gen *outinfo_gen)
+int		owner_width(struct stat *st, t_format *format)
 {
 	char			*owner;
 	struct passwd	*pd;
@@ -41,12 +42,12 @@ char		*get_owner(struct stat *st, t_outinfo_gen *outinfo_gen)
 	pd = getpwuid(st->st_uid);
 	owner = pd->pw_name;
 	width = ft_strlen(owner);
-	if (width > outinfo_gen->user_min_wid)
-		outinfo_gen->user_min_wid = width;
-	return (owner);
+	if (width > format->user_min_wid)
+		return (width);
+	return (format->user_min_wid);
 }
 
-char		*get_group(struct stat *st, t_outinfo_gen *outinfo_gen)
+int		group_width(struct stat *st, t_format *format)
 {
 	char			*group;
 	struct group	*grp;
@@ -55,9 +56,9 @@ char		*get_group(struct stat *st, t_outinfo_gen *outinfo_gen)
 	grp = getgrgid(st->st_gid);
 	group = grp->gr_name;
 	width = ft_strlen(group);
-	if (width > outinfo_gen->group_min_wid)
-		outinfo_gen->group_min_wid = width;
-	return (group);
+	if (width > format->group_min_wid)
+		return (width);
+	return (format->group_min_wid);
 }
 
 char		get_filetype(struct stat *st)
@@ -83,58 +84,59 @@ char		get_filetype(struct stat *st)
 		return ('-');
 }
 
-char		get_extended(t_outinfo_gen *outinfo_gen)
-{
-	acl_t		acl;
-	acl_entry_t	acl_e;
-	ssize_t		xattr;
+// char		get_extended(t_outinfo_gen *outinfo_gen)
+// {
+// 	acl_t		acl;
+// 	acl_entry_t	acl_e;
+// 	ssize_t		xattr;
 
-	acl = NULL;
-	xattr = 0;
-	acl = acl_get_link_np(outinfo_gen->filepath, ACL_TYPE_EXTENDED);
-	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &acl_e) == -1) {
-		acl_free(acl);
-		acl = NULL;
-	}
-	xattr = listxattr(outinfo_gen->filepath, NULL, 0, XATTR_NOFOLLOW);
-	if (xattr > 0)
-		return ('@');
-	else if (acl != NULL)
-		return ('+');
-	else
-		return (' ');
-}
+// 	acl = NULL;
+// 	xattr = 0;
+// 	acl = acl_get_link_np(outinfo_gen->filepath, ACL_TYPE_EXTENDED);
+// 	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &acl_e) == -1) {
+// 		acl_free(acl);
+// 		acl = NULL;
+// 	}
+// 	xattr = listxattr(outinfo_gen->filepath, NULL, 0, XATTR_NOFOLLOW);
+// 	if (xattr > 0)
+// 		return ('@');
+// 	else if (acl != NULL)
+// 		return ('+');
+// 	else
+// 		return (' ');
+// }
 
-void		get_rights(struct stat *st, char rights[12], t_outinfo_gen *outinfo_gen)
-{
-	if (!rights)
-		return ;
-	rights[0] = get_filetype(st);
-	rights[1] = (st->st_mode & S_IRUSR ? 'r' : '-');
-	rights[2] = (st->st_mode & S_IWUSR ? 'w' : '-');
-	rights[3] = (st->st_mode & S_IXUSR ? 'x' : '-');
-	rights[4] = (st->st_mode & S_IRGRP ? 'r' : '-');
-	rights[5] = (st->st_mode & S_IWGRP ? 'w' : '-');
-	rights[6] = (st->st_mode & S_IXGRP ? 'x' : '-');
-	rights[7] = (st->st_mode & S_IROTH ? 'r' : '-');
-	rights[8] = (st->st_mode & S_IWOTH ? 'w' : '-');
-	rights[9] = (st->st_mode & S_IXOTH ? 'x' : '-');
-	rights[10] = get_extended(outinfo_gen);
-	rights[11] = '\0';
-}
+// void		get_rights(struct stat *st, char rights[12], t_format *format)
+// {
+// 	if (!rights)
+// 		return ;
+// 	rights[0] = get_filetype(st);
+// 	rights[1] = (st->st_mode & S_IRUSR ? 'r' : '-');
+// 	rights[2] = (st->st_mode & S_IWUSR ? 'w' : '-');
+// 	rights[3] = (st->st_mode & S_IXUSR ? 'x' : '-');
+// 	rights[4] = (st->st_mode & S_IRGRP ? 'r' : '-');
+// 	rights[5] = (st->st_mode & S_IWGRP ? 'w' : '-');
+// 	rights[6] = (st->st_mode & S_IXGRP ? 'x' : '-');
+// 	rights[7] = (st->st_mode & S_IROTH ? 'r' : '-');
+// 	rights[8] = (st->st_mode & S_IWOTH ? 'w' : '-');
+// 	rights[9] = (st->st_mode & S_IXOTH ? 'x' : '-');
+// 	rights[10] = get_extended(outinfo_gen);
+// 	rights[11] = '\0';
+// }
 //    ^ _______ gets __________ ^
 
-void		field_widths(t_outinfo_gen *outinfo_gen, t_fileinfo *new_file)
+void		field_widths(t_format *format, t_fileinfo *new_file)
 {
 	int		len;
 
-	if ((len = ft_strlen(ft_lltoa((long long)new_file->st->st_ino))) > outinfo_gen->serial_min_wid)
-		outinfo_gen->serial_min_wid = len;
-	if ((len = ft_strlen(ft_itoa(new_file->st->st_nlink))) > outinfo_gen->links_min_wid)
-		outinfo_gen->links_min_wid = len;
-	if ((len = ft_strlen(ft_lltoa(new_file->st->st_size))) > outinfo_gen->file_size)
-		outinfo_gen->file_size = len;
-	// other field widths are set elsewhere
+	if ((len = ft_strlen(ft_lltoa((long long)new_file->st->st_ino))) > format->serial_min_wid)
+		format->serial_min_wid = len;
+	if ((len = ft_strlen(ft_itoa(new_file->st->st_nlink))) > format->links_min_wid)
+		format->links_min_wid = len;
+	if ((len = ft_strlen(ft_lltoa(new_file->st->st_size))) > format->file_size)
+		format->file_size = len;
+	format->user_min_wid = owner_width(new_file->st, format);
+	format->group_min_wid = group_width(new_file->st, format);
 }
 
 void	sort_nosort(t_fileinfo **files, t_fileinfo *new_file)
@@ -248,38 +250,33 @@ t_fileinfo	*sort_modtime(t_fileinfo **files, t_fileinfo *new_file)
 	return (head);
 }
 
-void	add_new_file(t_fileinfo **files, struct stat *st, t_options *options, t_outinfo_gen *outinfo_gen)
+void	add_new_file(t_fileinfo **files, struct stat *st, t_all *all, t_to_ls *to_ls)
 {
 	t_fileinfo		*new_file;
 
 	new_file = (t_fileinfo*)ft_memalloc(sizeof(t_fileinfo));
 	new_file->st = st;
-	new_file->filename = outinfo_gen->curfile;
-	get_rights(st, new_file->rights, outinfo_gen); //sets new_file->rights
-	if (!options->option_n)
-	{
-		new_file->owner_name = get_owner(st, outinfo_gen);
-		new_file->group_name = get_group(st, outinfo_gen);
-	}
+	new_file->filename = all->filename;
+	new_file->path = to_ls->path; // this is allocated memmory in to_ls
 	new_file->next = NULL;
-	field_widths(outinfo_gen, new_file);// done set field widths
-	if (options->option_f)
+	field_widths(all->format, new_file);
+	if (all->options->option_f)
 		sort_nosort(files, new_file); // made
-	else if (options->option_t)
+	else if (all->options->option_t)
 		*files = sort_modtime(files, new_file); // made
-	else if (options->option_r)
+	else if (all->options->option_r)
 		*files = sort_reverse(files, new_file); // made
 	else
 		*files = sort_default(files, new_file); // made
 }
 // ^ finish this then test ^
 
-char		*get_corrected_path(char *filefrom, char *d_name)
+char		*get_file_path(char *filefrom, char *d_name)
 {
 	char	*tmp;
 	char	*ret;
 
-	if (filefrom[ft_strlen(filefrom)] == '/')
+	if (filefrom[ft_strlen(filefrom) - 1] == '/')
 		ret = ft_strjoin(filefrom, d_name);
 	else
 	{
@@ -291,86 +288,92 @@ char		*get_corrected_path(char *filefrom, char *d_name)
 	return (ret);
 }
 
-t_fileinfo	*get_files_info(t_options *options, char *filesfrom, t_outinfo_gen *outinfo_gen)
+t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 {
 	t_fileinfo		*files;
 	DIR				*dir;
 	struct dirent	*dirptr;
 	struct stat		*st;
-	char			*fixed_path;
 
 	files = NULL;
-	dir = opendir(filesfrom);
+	dir = opendir(to_ls->name);
 	while ((dirptr = readdir(dir)))
 	{
-		fixed_path = get_corrected_path(filesfrom ,dirptr->d_name);
+		to_ls->path = get_file_path(to_ls->name, dirptr->d_name); // should be good
+		ft_printf("to_ls->path: %s\n", to_ls->path);
 		st = (struct stat*)ft_memalloc(sizeof(struct stat));
-		if (lstat(dirptr->d_name, st) == 0 || lstat(fixed_path, st) == 0)
+		if (/*lstat(dirptr->d_name, st) == 0 || */lstat(to_ls->path, st) == 0) // this might change slightly
 		{
-			outinfo_gen->curfile = dirptr->d_name;
-			outinfo_gen->filepath = fixed_path;
-			add_new_file(&files, st, options, outinfo_gen);	
+			all->filename = dirptr->d_name;
+			if (dirptr->d_name[0] == '.' && !all->options->option_a)
+				free(st);
+			else
+				add_new_file(&files, st, all, to_ls); // check this
 		}
-		else
+		else if (st)
 			free(st);
-		if (fixed_path)
-			free(fixed_path);
 	}
 	closedir(dir);
 	return (files);
 }
 
-void	ft_ls(t_options	*options, t_to_ls **to_ls)
+void	ft_ls(t_all	*all)
 {
-	t_outinfo_gen	outinfo_gen;
 	t_to_ls			*tmp;
 	t_fileinfo		*files;
 	//t_to_ls			*sub_dirs;
 
-	ft_bzero(&outinfo_gen, (sizeof(t_outinfo_gen)));
-	check_ls_paths(to_ls); //print an error and remove the path if non existent
-	tmp = *to_ls;
+	all->format = (t_format*)ft_memalloc(sizeof(t_format));
+	if (!all->format)
+		return ;
+	check_ls_paths(&all->to_ls);
+	tmp = all->to_ls;
 	// make sure all the files in to_ls exist and can be reached from "."
 	while (tmp)
 	{ // get_files_info is where most of the magic will be happening
-		files = get_files_info(options, tmp->name, &outinfo_gen); // make this. should sort correctly as it goes. if premision is not allowed note that.
-		output_info(files, options, &outinfo_gen); // make this. needs to ouput all the file information correclty
+		files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
+	//	output_info(files, options, &all->format); // make this. needs to ouput all the file information correclty
 		// recurse here if we have -R
 		// if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
 		// {
 		// 	sub_dirs = get_sub_dirs(files); // make this. if no directories found return NULL
 		// 	if (sub_dirs)
-		// 		ft_ls(option, sub_dirs); // recursion. make sure this is sage
+		// 		ft_ls(option, sub_dirs); // recursion. make sure this is safe
 		// }
 		tmp = tmp->next;
 	}
-	// t_fileinfo	*tmpp = files;
-	// while (tmpp)
-	// {
-	// 	ft_printf("%s	%s	%s	%s\n", tmpp->filename, tmpp->rights, tmpp->owner_name, tmpp->group_name);
-	// 	tmpp = tmpp->next;
-	// }
+	t_fileinfo	*tmpp = files;
+	while (tmpp)
+	{
+		ft_printf("%s\n", tmpp->filename);
+		tmpp = tmpp->next;
+	}
 }
 
 int		main(int argc, char **argv)
 {
-	t_options	options;
+	t_all		all;
 
-	ft_bzero(&options, sizeof(t_options));
-	get_options(argc, argv, &options); // make this. checks for options
-	if (!options.to_ls)
-		parse_directory(".", (&options.to_ls));
-	ft_ls(&options, &options.to_ls);
+	ft_bzero(&all, sizeof(t_all));
+	all.options = (t_options*)ft_memalloc(sizeof(t_options));
+	if (!all.options)
+		return (0);
+	all.to_ls = NULL;
+	all.files = NULL;
+	get_options(argc, argv, &all); // make this. checks for options
+	if (!all.to_ls)
+		parse_directory("./", (&all.to_ls));
+	ft_ls(&all);
 
-// printing stuff out
-//	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", options.option_l, options.option_R, options.option_a, options.option_r, options.option_t, options.option_G, options.option_i, options.option_F);
-// printing directories to list
-	// t_to_ls 	*tmp = options.to_ls;
-	// while (tmp)
-	// {
-	// 	ft_printf("to_ls: %s\n", tmp->name);
-	// 	tmp = tmp->next;
-	// }
+// // printing stuff out
+// 	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", all.options->option_l, all.options->option_R, all.options->option_a, all.options->option_r, all.options->option_t, all.options->option_G, all.options->option_i, all.options->option_F);
+// // printing directories to list
+// 	t_to_ls 	*tmp = all.to_ls;
+// 	while (tmp)
+// 	{
+// 		ft_printf("to_ls: %s\n", tmp->name);
+// 		tmp = tmp->next;
+// 	}
 	// once we have the options we need to get the files contained in the current directory
 	return (0);
 }

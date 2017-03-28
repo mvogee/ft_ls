@@ -24,6 +24,9 @@
 # include <pwd.h>
 # include <sys/acl.h>
 # include <grp.h>
+# include <stdio.h>
+# include <string.h>
+# include <errno.h>
 
 # define SIX_MONTHS 15552000
 
@@ -37,36 +40,25 @@ typedef enum		e_errors
 typedef struct		s_to_ls
 {
 	struct s_to_ls	*next;
+	char			*path;
 	char			*name;
 }					t_to_ls;
 
-typedef struct 		s_outinfo_general // to be used for all outputting for minimum width for respecive fields
+typedef struct 		s_format // to be used for all outputting for minimum width for respecive fields
 { // set each of these to the largest for each ouput set
-	char			*curfile;
-	char			*filepath;
-	int 			serial_min_wid;
+	int				serial_min_wid;
 	int				links_min_wid;
 	int				user_min_wid;
 	int				group_min_wid;
 	int				file_size;
-}					t_outinfo_gen;
+}					t_format;
 
 typedef struct		s_fileinfo
 {
 	struct s_fileinfo	*next;
-//	DIR					*dir;
-//	struct dirent		*dp;
 	struct stat			*st;
-	//struct passwd 		*password;
 	char				*filename;
-	// unsigned int		serial; // st_ino
-	char				rights[12]; // st_mode // extract the string
-	// unsigned int		links; // st_nlink
-	char				*owner_name; //st_uid
-	char				*group_name; //st_gid
-	// unsigned int		devide_type; // st_rdev
-	// unsigned int		size_bytes; // st_size
-	// char				last_mod[13] // will be created from timespecs
+	char				*path;
 }					t_fileinfo;
 
 typedef struct		s_options
@@ -81,8 +73,16 @@ typedef struct		s_options
 	unsigned int option_F : 1; // bonus file names followed by symbol
 	unsigned int option_f : 1; // bonus unsorted order
 	unsigned int option_n : 1; // bonus display user and group as number
-	t_to_ls				*to_ls; // directories given to be the subjects to look in
 }					t_options;
+
+typedef struct 		s_all
+{
+	t_fileinfo		*files;
+	t_to_ls			*to_ls;
+	t_options		*options;
+	t_format		*format;
+	char			*filename;
+}					t_all;
 
 /*
 ** main.c
@@ -94,9 +94,9 @@ void	throw_error(int reason, char *bad_info);
 ** parse_options.c
 */
 // static t_to_ls	*add_new_sorted(t_to_ls **to_ls, t_to_ls *new)
-void	parse_options(char *opt, t_options *options);
+void	parse_options(char *opt, t_options **options);
 void	parse_directory(char *file, t_to_ls	**to_ls);
-void	get_options(int argc, char **argv, t_options *options);
+void	get_options(int argc, char **argv, t_all *all);
 
 /*
 ** check_ls_paths.c
@@ -109,6 +109,6 @@ void			check_ls_paths(t_to_ls **to_ls);
 ** output.c
 */
 
-void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi);
+//void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi);
 
 # endif

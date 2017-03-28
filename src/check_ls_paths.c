@@ -46,9 +46,7 @@ void			check_ls_paths(t_to_ls **to_ls)
 		if (!d)
 		{
 			next = tmp->next;
-			write(2, "ft_ls: ", 8);
-			write(2, tmp->name, ft_strlen(tmp->name) + 1);
-			write(2, ": No such file or directory\n", 29);
+			ft_printf("ft_ls: %s: %s\n", tmp->name, strerror(errno));
 			*to_ls = bad_path(to_ls, tmp);
 			tmp = next;
 		}

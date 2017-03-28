@@ -12,7 +12,7 @@
 
 #include "ft_ls.h"
 
-void			parse_options(char *opt, t_options *options)
+void			parse_options(char *opt, t_options **options)
 {
 	int			i;
 
@@ -20,28 +20,28 @@ void			parse_options(char *opt, t_options *options)
 	while (opt[i])
 	{
 		if (opt[i] == 'l')
-			options->option_l = 1;
+			(*options)->option_l = 1;
 		else if (opt[i] == 'R')
-			options->option_R = 1;
+			(*options)->option_R = 1;
 		else if (opt[i] == 'a')
-			options->option_a = 1;
+			(*options)->option_a = 1;
 		else if (opt[i] == 'r')
-			options->option_r = 1;
+			(*options)->option_r = 1;
 		else if (opt[i] == 't')
-			options->option_t = 1;
+			(*options)->option_t = 1;
 		else if (opt[i] == 'i') // bonus. serial number
-			options->option_i = 1;
+			(*options)->option_i = 1;
 		else if (opt[i] == 'G') // bonus. collor
-			options->option_G = 1;
+			(*options)->option_G = 1;
 		else if (opt[i] == 'F') // bonus. file names followed by symbol
-			options->option_F = 1;
+			(*options)->option_F = 1;
 		else if (opt[i] == 'f') // bonus. unsorted order
 			{
-				options->option_f = 1;
-				options->option_a = 1;
+				(*options)->option_f = 1;
+				(*options)->option_a = 1;
 			}
 		else if (opt[i] == 'n') // bonus. display user and group as number
-			options->option_n = 1;
+			(*options)->option_n = 1;
 		else
 			throw_error(INVALID_OPTION, opt + i);
 		i++;
@@ -88,7 +88,7 @@ void			parse_directory(char *file, t_to_ls	**to_ls)
 		*to_ls = add_new_sorted(to_ls, new);
 }
 
-void			get_options(int argc, char **argv, t_options *options)
+void			get_options(int argc, char **argv, t_all *all)
 {
 	int			count;
 	int			type;
@@ -107,11 +107,11 @@ void			get_options(int argc, char **argv, t_options *options)
 	while (count < argc)
 	{
 		if (argv[count][0] == '-' && argv[count][1] != '\0' && type == 0)
-			parse_options(argv[count], options);
+			parse_options(argv[count], &all->options);
 		else
 		{
 			type = 1;
-			parse_directory(argv[count], &options->to_ls);
+			parse_directory(argv[count], &all->to_ls);
 		}
 		count++;
 	}

@@ -72,6 +72,14 @@ void	print_blocksize(t_fileinfo *files, t_options *options)
 	ft_printf("total %zu\n", total);
 }
 
+// void	output_name(t_fileinfo *file, t_options *options)
+// {
+// 	if (file->rights[0] == 'l')
+// 	{
+// 		output a link
+// 	}
+// }
+
 void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 {
 	t_fileinfo *tmp;
@@ -79,10 +87,6 @@ void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 	tmp = files;
 	if (options->option_l)
 		print_blocksize(files, options);
-	// if (optons->option_G)
-	// 	output_color(files, options, oi); // make this
-	// else
-	// { // move all this to other funciton
 	while (tmp)
 	{
 		if (tmp->filename[0] == '.' && !options->option_a)
@@ -102,11 +106,11 @@ void	output_info(t_fileinfo *files, t_options *options, t_outinfo_gen *oi)
 			ft_printf(" %*lld ", oi->file_size, tmp->st->st_size);
 			output_date(tmp);
 		}
+//		output_name(tmp, options);
 		ft_printf("%s", tmp->filename);
 		if (options->option_F)
 			output_file_symbol(tmp->rights, tmp->filename);
 		ft_printf("\n");
 		tmp = tmp->next;
 	}
-//	}
 }
