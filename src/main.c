@@ -305,7 +305,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 void	ft_ls(t_all	*all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
-	//t_to_ls			*sub_dirs;
+	t_to_ls			*sub_dirs;
 
 	if (!all->format)
 		all->format = (t_format*)ft_memalloc(sizeof(t_format));
@@ -323,21 +323,15 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 			output_info(tmp, all); // make this. needs to ouput all the file information correclty
 		}
 		// recurse here if we have -R
-		// if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
-		// {
-		// 	sub_dirs = get_sub_dirs(all->files); // make this. if no directories found return NULL. append the current full path name
-		// 	if (sub_dirs)
-		// 		ft_ls(all, sub_dirs); // recursion. make sure this is safe
-		// }
+		if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
+		{
+			sub_dirs = get_sub_dirs(all->files); // make this. if no directories found return NULL. append the current full path name
+			if (sub_dirs)
+				ft_ls(all, sub_dirs); // recursion. make sure this is safe
+		}
 		if ((tmp = tmp->next))
 			ft_printf("\n");
 	}
-	// t_fileinfo	*tmpp = all->files;
-	// while (tmpp)
-	// {
-	// 	ft_printf("%s\n", tmpp->filename);
-	// 	tmpp = tmpp->next;
-	// }
 }
 
 int		main(int argc, char **argv)
