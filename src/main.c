@@ -302,29 +302,32 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 	return (files);
 }
 
-void	ft_ls(t_all	*all)
+void	ft_ls(t_all	*all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
-//	t_fileinfo		*files;
 	//t_to_ls			*sub_dirs;
 
-	all->format = (t_format*)ft_memalloc(sizeof(t_format));
 	if (!all->format)
-		return ;
+		all->format = (t_format*)ft_memalloc(sizeof(t_format));
 	check_ls_paths(&all->to_ls);
-	tmp = all->to_ls;
-	if (tmp->next)
+	tmp = to_ls;
+	if (tmp->next || all->options->option_R)
 		all->print_dir = 1;
 	while (tmp)
 	{
-		all->files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
-		output_info(tmp, all); // make this. needs to ouput all the file information correclty
+		if (tmp->ls_file)
+			output_single_file(all, tmp); // make this
+		else
+		{
+			all->files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
+			output_info(tmp, all); // make this. needs to ouput all the file information correclty
+		}
 		// recurse here if we have -R
 		// if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
 		// {
-		// 	sub_dirs = get_sub_dirs(files); // make this. if no directories found return NULL
+		// 	sub_dirs = get_sub_dirs(all->files); // make this. if no directories found return NULL. append the current full path name
 		// 	if (sub_dirs)
-		// 		ft_ls(option, sub_dirs); // recursion. make sure this is safe
+		// 		ft_ls(all, sub_dirs); // recursion. make sure this is safe
 		// }
 		if ((tmp = tmp->next))
 			ft_printf("\n");
@@ -350,7 +353,7 @@ int		main(int argc, char **argv)
 	get_options(argc, argv, &all); // make this. checks for options
 	if (!all.to_ls)
 		parse_directory("./", (&all.to_ls));
-	ft_ls(&all);
+	ft_ls(&all, all.to_ls);
 
 // // printing stuff out
 // 	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", all.options->option_l, all.options->option_R, all.options->option_a, all.options->option_r, all.options->option_t, all.options->option_G, all.options->option_i, all.options->option_F);

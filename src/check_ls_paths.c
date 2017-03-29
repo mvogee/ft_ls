@@ -43,18 +43,20 @@ void			check_ls_paths(t_to_ls **to_ls) // this clears file paths >;(
 	while (tmp)
 	{
 		d = opendir(tmp->name);
+		next = tmp->next;
 		if (!d)
 		{
-			next = tmp->next;
-			ft_printf("ft_ls: %s: %s\n", tmp->name, strerror(errno));
-			*to_ls = bad_path(to_ls, tmp);
-			tmp = next;
+			if (errno == 20)
+				tmp->ls_file = 1;
+			else
+			{
+				ft_printf("ft_ls: %s: %s\n", tmp->name, strerror(errno));
+				*to_ls = bad_path(to_ls, tmp);
+			}
 		}
 		else
-		{
 			free(d);
-			tmp = tmp->next;
-		}
+		tmp = next;
 	}
 	if (!(*to_ls))
 		exit(EXIT_FAILURE);

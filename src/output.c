@@ -12,7 +12,7 @@
 
 #include "ft_ls.h"
 
-void	output_date(t_fileinfo *file)
+void	output_date(struct stat *st)
 {
 	time_t	curtime;
 	char	*filetime;
@@ -21,13 +21,13 @@ void	output_date(t_fileinfo *file)
 
 	time_or_year = 0;
 	curtime = time(NULL);
-	filetime = ft_strsub(ctime(&file->st->st_mtime), 4, 6);
+	filetime = ft_strsub(ctime(&st->st_mtime), 4, 6);
 	if (!filetime)
 		return ;
-	if (file->st->st_mtime > curtime || file->st->st_mtime + SIX_MONTHS < curtime)
-		p2 = ft_strsub(ctime(&file->st->st_mtime), 20, 4);
+	if (st->st_mtime > curtime || st->st_mtime + SIX_MONTHS < curtime)
+		p2 = ft_strsub(ctime(&st->st_mtime), 20, 4);
 	else
-		p2 = ft_strsub(ctime(&file->st->st_mtime), 11, 5);
+		p2 = ft_strsub(ctime(&st->st_mtime), 11, 5);
 	ft_printf("%s %5s ", filetime, p2);
 	if (filetime)
 		free(filetime);
@@ -35,20 +35,20 @@ void	output_date(t_fileinfo *file)
 		free(p2);
 }
 
-void	output_file_symbol(t_fileinfo *file)
+void	output_file_symbol(struct stat *st, char *filename)
 {
-	if ((file->st->st_mode & S_IFMT) == S_IFDIR)
+	if ((st->st_mode & S_IFMT) == S_IFDIR)
 		write(1, "/", 1);
-	else if ((file->st->st_mode & S_IFMT) == S_IFLNK)
+	else if ((st->st_mode & S_IFMT) == S_IFLNK)
 		write(1, "@", 1);
-	else if ((file->st->st_mode & S_IFMT) == S_IFSOCK)
+	else if ((st->st_mode & S_IFMT) == S_IFSOCK)
 		write(1, "=", 1);
-	else if (!file->filename || file->filename == '\0')
+	else if (!filename || *filename == '\0')
 		write(1, "%", 1);
-	else if ((file->st->st_mode & S_IFMT) == S_IFIFO)
+	else if ((st->st_mode & S_IFMT) == S_IFIFO)
 		write(1, "|", 1);
-	else if (file->st->st_mode & S_IXUSR ||
-		file->st->st_mode & S_IXGRP || file->st->st_mode & S_IXOTH)
+	else if (st->st_mode & S_IXUSR ||
+			st->st_mode & S_IXGRP || st->st_mode & S_IXOTH)
 		write(1, "*", 1);
 }
 
@@ -80,11 +80,11 @@ void	print_blocksize(t_fileinfo *files, t_options *options)
 // 	}
 // }
 
-void	ouput_filetype(t_fileinfo *file)
+void	ouput_filetype(struct stat *st)
 {
 	int filetype;
 
-	filetype = file->st->st_mode & S_IFMT;
+	filetype = st->st_mode & S_IFMT;
 	if (filetype == S_IFREG)
 		write(1, "-", 1);
 	else if (filetype == S_IFBLK)
@@ -103,7 +103,7 @@ void	ouput_filetype(t_fileinfo *file)
 		write(1, "-", 1);
 }
 
-void	output_extended(t_fileinfo *file)
+void	output_extended(char *path)
 {
 	acl_t		acl;
 	acl_entry_t	acl_e;
@@ -111,13 +111,13 @@ void	output_extended(t_fileinfo *file)
 
 	acl = NULL;
 	xattr = 0;
-	acl = acl_get_link_np(file->path, ACL_TYPE_EXTENDED);
+	acl = acl_get_link_np(path, ACL_TYPE_EXTENDED);
 	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &acl_e) == -1)
 	{
 		acl_free(acl);
 		acl = NULL;
 	}
-	xattr = listxattr(file->path, NULL, 0, XATTR_NOFOLLOW);
+	xattr = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
 	if (xattr > 0)
 		write (1, "@", 1);
 	else if (acl != NULL)
@@ -126,40 +126,40 @@ void	output_extended(t_fileinfo *file)
 		write(1, " ", 1);
 }
 
-void	output_premissions(t_fileinfo *file)
+void	output_premissions(struct stat *st, char *path)
 {
-	ouput_filetype(file);
-	(file->st->st_mode & S_IRUSR ? write(1, "r", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IWUSR ? write(1, "w", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IXUSR ? write(1, "x", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IRGRP ? write(1, "r", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IWGRP ? write(1, "w", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IXGRP ? write(1, "x", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IROTH ? write(1, "r", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IWOTH ? write(1, "w", 1) : write(1, "-", 1));
-	(file->st->st_mode & S_IXOTH ? write(1, "x", 1) : write(1, "-", 1));
-	output_extended(file);
+	ouput_filetype(st);
+	(st->st_mode & S_IRUSR ? write(1, "r", 1) : write(1, "-", 1));
+	(st->st_mode & S_IWUSR ? write(1, "w", 1) : write(1, "-", 1));
+	(st->st_mode & S_IXUSR ? write(1, "x", 1) : write(1, "-", 1));
+	(st->st_mode & S_IRGRP ? write(1, "r", 1) : write(1, "-", 1));
+	(st->st_mode & S_IWGRP ? write(1, "w", 1) : write(1, "-", 1));
+	(st->st_mode & S_IXGRP ? write(1, "x", 1) : write(1, "-", 1));
+	(st->st_mode & S_IROTH ? write(1, "r", 1) : write(1, "-", 1));
+	(st->st_mode & S_IWOTH ? write(1, "w", 1) : write(1, "-", 1));
+	(st->st_mode & S_IXOTH ? write(1, "x", 1) : write(1, "-", 1));
+	output_extended(path);
 
 }
 
-void	output_user_group_names(t_format *format, t_fileinfo *file)
+void	output_user_group_names(t_format *format, struct stat *st)
 {
 	struct group	*grp;
 	struct passwd	*pd;
 
-	pd = getpwuid(file->st->st_uid);
-	grp = getgrgid(file->st->st_gid);
+	pd = getpwuid(st->st_uid);
+	grp = getgrgid(st->st_gid);
 	ft_printf("%*s  ", format->user_min_wid, pd->pw_name);
 	ft_printf("%*s ", format->group_min_wid, grp->gr_name);
 }
 
-void	follow_links(t_fileinfo *file)
+void	follow_links(char *filepath)
 {
 	char	link_buf[1024];
 	ssize_t	count;
 
 	ft_bzero(link_buf, sizeof(link_buf));
-	count = readlink(file->path, link_buf, sizeof(link_buf));
+	count = readlink(filepath, link_buf, sizeof(link_buf));
 	if (count < 0)
 	{
 		perror("readlinkl");
@@ -169,23 +169,23 @@ void	follow_links(t_fileinfo *file)
 	ft_printf(" -> %s", link_buf);
 }
 
-void	output_size_or_sys(t_format *format, t_fileinfo *file)
+void	output_size_or_sys(t_format *format, struct stat *st)
 {
-	if ((file->st->st_mode & S_IFMT) == S_IFLNK ||
-		(file->st->st_mode & S_IFMT) == S_IFCHR ||
-		(file->st->st_mode & S_IFMT) == S_IFBLK)
+	if ((st->st_mode & S_IFMT) == S_IFLNK ||
+		(st->st_mode & S_IFMT) == S_IFCHR ||
+		(st->st_mode & S_IFMT) == S_IFBLK)
 	{
-		if ((file->st->st_mode & S_IFMT) == S_IFLNK)
+		if ((st->st_mode & S_IFMT) == S_IFLNK)
 			ft_printf("%*s%*s", format->rdev_size, "", format->rdev2_size, "");
 		else
-			ft_printf("  %*d,", format->rdev_size, file->st->st_rdev >> 24);
-		ft_printf(" %*d ", format->rdev2_size, file->st->st_rdev & 0xFFFFFF);
+			ft_printf("  %*d,", format->rdev_size, st->st_rdev >> 24);
+		ft_printf(" %*d ", format->rdev2_size, st->st_rdev & 0xFFFFFF);
 	}
 	else
 	{
 		if (format->rdev_size > 0 || format->rdev2_size > 0)
 			ft_printf("  %*s%*s", format->rdev_size, "", format->rdev2_size, "");
-		ft_printf(" %*lld ", format->file_size, file->st->st_size);
+		ft_printf(" %*lld ", format->file_size, st->st_size);
 	}
 }
 
@@ -207,21 +207,49 @@ void	output_info(t_to_ls *directory, t_all *all)
 			ft_printf("%*llu ", all->format->serial_min_wid ,tmp->st->st_ino);
 		if (all->options->option_l)
 		{
-			output_premissions(tmp); // done
+			output_premissions(tmp->st, tmp->path); // done
 			ft_printf(" %*d ", all->format->links_min_wid, tmp->st->st_nlink);
 			if (!all->options->option_n)
-				output_user_group_names(all->format, tmp); // done
+				output_user_group_names(all->format, tmp->st); // done
 			else
 				ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid, all->format->group_min_wid, tmp->st->st_gid);
-			output_size_or_sys(all->format, tmp);
-			output_date(tmp);
+			output_size_or_sys(all->format, tmp->st);
+			output_date(tmp->st);
 		}
 		ft_printf("%s", tmp->filename);
 		if (all->options->option_F)
-			output_file_symbol(tmp);
+			output_file_symbol(tmp->st, tmp->filename);
 		if (((tmp->st->st_mode & S_IFMT) == S_IFLNK))
-			follow_links(tmp);
+			follow_links(tmp->path);
 		ft_printf("\n");
 		tmp = tmp->next;
+	}
+}
+
+void	output_single_file(t_all *all, t_to_ls *file)
+{
+	struct stat st;
+
+	if (lstat(file->name, &st) == 0)
+	{
+		if (all->options->option_i)
+			ft_printf("%*llu ", all->format->serial_min_wid ,st.st_ino);
+		if (all->options->option_l)
+		{
+			output_premissions(&st, file->name);
+			ft_printf(" %*d ", all->format->links_min_wid, st.st_nlink);
+			if (!all->options->option_n)
+				output_user_group_names(all->format, &st); // done
+			else
+				ft_printf("%*d  %*d ",  all->format->user_min_wid, st.st_uid, all->format->group_min_wid, st.st_gid);
+			output_size_or_sys(all->format, &st);
+			output_date(&st);
+		}
+		ft_printf("%s", file->name);
+		if (all->options->option_F)
+			output_file_symbol(&st, file->name);
+		if (((st.st_mode & S_IFMT) == S_IFLNK))
+			follow_links(file->name);
+		ft_printf("\n");
 	}
 }

@@ -42,6 +42,7 @@ typedef struct		s_to_ls
 	struct s_to_ls	*next;
 	char			*path;
 	char			*name;
+	unsigned int ls_file : 1;
 }					t_to_ls;
 
 typedef struct 		s_format // to be used for all outputting for minimum width for respecive fields
@@ -113,5 +114,6 @@ void			check_ls_paths(t_to_ls **to_ls);
 */
 
 void	output_info(t_to_ls *directory, t_all *all);
+void	output_single_file(t_all *all, t_to_ls *file);
 
 # endif
