@@ -51,6 +51,8 @@ typedef struct 		s_format // to be used for all outputting for minimum width for
 	int				user_min_wid;
 	int				group_min_wid;
 	int				file_size;
+	int				rdev_size;
+	int				rdev2_size;
 }					t_format;
 
 typedef struct		s_fileinfo

@@ -39,9 +39,6 @@ void	output_file_symbol(t_fileinfo *file)
 {
 	if ((file->st->st_mode & S_IFMT) == S_IFDIR)
 		write(1, "/", 1);
-	else if (file->st->st_mode & S_IXUSR ||
-		file->st->st_mode & S_IXGRP || file->st->st_mode & S_IXOTH)
-		write(1, "*", 1);
 	else if ((file->st->st_mode & S_IFMT) == S_IFLNK)
 		write(1, "@", 1);
 	else if ((file->st->st_mode & S_IFMT) == S_IFSOCK)
@@ -50,6 +47,9 @@ void	output_file_symbol(t_fileinfo *file)
 		write(1, "%", 1);
 	else if ((file->st->st_mode & S_IFMT) == S_IFIFO)
 		write(1, "|", 1);
+	else if (file->st->st_mode & S_IXUSR ||
+		file->st->st_mode & S_IXGRP || file->st->st_mode & S_IXOTH)
+		write(1, "*", 1);
 }
 
 void	print_blocksize(t_fileinfo *files, t_options *options)
@@ -153,13 +153,49 @@ void	output_user_group_names(t_format *format, t_fileinfo *file)
 	ft_printf("%*s ", format->group_min_wid, grp->gr_name);
 }
 
+void	follow_links(t_fileinfo *file)
+{
+	char	link_buf[1024];
+	ssize_t	count;
+
+	ft_bzero(link_buf, sizeof(link_buf));
+	count = readlink(file->path, link_buf, sizeof(link_buf));
+	if (count < 0)
+	{
+		perror("readlinkl");
+		exit(EXIT_FAILURE);
+	}
+	link_buf[count] = '\0';
+	ft_printf(" -> %s", link_buf);
+}
+
+void	output_size_or_sys(t_format *format, t_fileinfo *file)
+{
+	if ((file->st->st_mode & S_IFMT) == S_IFLNK ||
+		(file->st->st_mode & S_IFMT) == S_IFCHR ||
+		(file->st->st_mode & S_IFMT) == S_IFBLK)
+	{
+		if ((file->st->st_mode & S_IFMT) == S_IFLNK)
+			ft_printf("%*s%*s", format->rdev_size, "", format->rdev2_size, "");
+		else
+			ft_printf("  %*d,", format->rdev_size, file->st->st_rdev >> 24);
+		ft_printf(" %*d ", format->rdev2_size, file->st->st_rdev & 0xFFFFFF);
+	}
+	else
+	{
+		if (format->rdev_size > 0 || format->rdev2_size > 0)
+			ft_printf("  %*s%*s", format->rdev_size, "", format->rdev2_size, "");
+		ft_printf(" %*lld ", format->file_size, file->st->st_size);
+	}
+}
+
 void	output_info(t_to_ls *directory, t_all *all)
 {
 	t_fileinfo *tmp;
 
 	tmp = all->files;
 	if (all->print_dir)
-		ft_printf("%s\n", directory->name);
+		ft_printf("%s:\n", directory->name);
 	if (all->options->option_l)
 		print_blocksize(all->files, all->options);
 	// if (all->options->option_G)
@@ -176,15 +212,15 @@ void	output_info(t_to_ls *directory, t_all *all)
 			if (!all->options->option_n)
 				output_user_group_names(all->format, tmp); // done
 			else
-				ft_printf("%d  %d ",  tmp->st->st_uid, tmp->st->st_gid);
-			// make function that either prints filesize or system informations
-			ft_printf(" %*lld ", all->format->file_size, tmp->st->st_size);
+				ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid, all->format->group_min_wid, tmp->st->st_gid);
+			output_size_or_sys(all->format, tmp);
 			output_date(tmp);
 		}
-//		output_name_or_links(tmp, directory); // make this
 		ft_printf("%s", tmp->filename);
 		if (all->options->option_F)
 			output_file_symbol(tmp);
+		if (((tmp->st->st_mode & S_IFMT) == S_IFLNK))
+			follow_links(tmp);
 		ft_printf("\n");
 		tmp = tmp->next;
 	}

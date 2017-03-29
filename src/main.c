@@ -114,6 +114,15 @@ void		field_widths(t_format *format, t_fileinfo *new_file)
 		format->file_size = len;
 	format->user_min_wid = owner_width(new_file->st, format);
 	format->group_min_wid = group_width(new_file->st, format);
+	if ((new_file->st->st_mode & S_IFMT) == S_IFLNK ||
+		(new_file->st->st_mode & S_IFMT) == S_IFCHR ||
+		(new_file->st->st_mode & S_IFMT) == S_IFBLK)
+	{
+		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev >> 24)))) > format->rdev_size)
+			format->rdev_size = len;
+		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev & 0xFFFFFF)))) > format->rdev2_size)
+			format->rdev2_size = len;
+	}
 }
 
 void	sort_nosort(t_fileinfo **files, t_fileinfo *new_file)
@@ -277,7 +286,6 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 	while ((dirptr = readdir(dir)))
 	{
 		to_ls->path = get_file_path(to_ls->name, dirptr->d_name); // should be good
-//		ft_printf("to_ls->path: %s\n", to_ls->path);
 		st = (struct stat*)ft_memalloc(sizeof(struct stat));
 		if (lstat(to_ls->path, st) == 0)
 		{
@@ -285,7 +293,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 			if (dirptr->d_name[0] == '.' && !all->options->option_a)
 				free(st);
 			else
-				add_new_file(&files, st, all, to_ls); // check this
+				add_new_file(&files, st, all, to_ls);
 		}
 		else if (st)
 			free(st);
@@ -318,8 +326,8 @@ void	ft_ls(t_all	*all)
 		// 	if (sub_dirs)
 		// 		ft_ls(option, sub_dirs); // recursion. make sure this is safe
 		// }
-		tmp = tmp->next;
-		ft_printf("\n");
+		if ((tmp = tmp->next))
+			ft_printf("\n");
 	}
 	// t_fileinfo	*tmpp = all->files;
 	// while (tmpp)

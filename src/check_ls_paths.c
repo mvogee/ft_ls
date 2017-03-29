@@ -33,7 +33,7 @@ static t_to_ls	*bad_path(t_to_ls **to_ls, t_to_ls *bad_path)
 	return (head);
 }
 
-void			check_ls_paths(t_to_ls **to_ls)
+void			check_ls_paths(t_to_ls **to_ls) // this clears file paths >;(
 {
 	t_to_ls		*tmp;
 	t_to_ls		*next;
