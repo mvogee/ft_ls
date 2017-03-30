@@ -365,7 +365,8 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 	if (!all->format)
 		all->format = (t_format*)ft_memalloc(sizeof(t_format));
 	check_ls_paths(&to_ls);
-	tmp = to_ls;
+	if (!(tmp = to_ls))
+		return ;
 	if (tmp->next || all->options->option_R)
 		all->print_dir = 1;
 	while (tmp)
