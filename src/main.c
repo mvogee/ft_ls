@@ -302,6 +302,61 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 	return (files);
 }
 
+void	add_new_dir(t_fileinfo *dir, t_to_ls **sub_dirs)
+{
+	t_to_ls			*new_dir;
+	t_to_ls			*tmp;
+
+	tmp = *sub_dirs;
+	new_dir = (t_to_ls*)ft_memalloc(sizeof(t_to_ls));
+	if (!dir)
+		return ;
+	new_dir->next = NULL;
+	new_dir->name = ft_strdup(dir->path);
+	new_dir->path = ft_strdup(dir->path);
+	if (!tmp)
+		*sub_dirs = new_dir;
+	else
+	{
+		while(tmp->next)
+			tmp = tmp->next;
+		tmp->next = new_dir;
+	}
+}
+
+t_to_ls *get_sub_dirs(t_fileinfo *files)
+{
+	t_to_ls			*sub_dirs;
+	t_fileinfo		*tmp;
+
+	tmp = files;
+	sub_dirs = NULL;
+	while (tmp)
+	{
+		if ((tmp->st->st_mode & S_IFMT) == S_IFDIR)
+			add_new_dir(tmp, &sub_dirs);
+		tmp = tmp->next;
+	}
+	return (sub_dirs);
+}
+
+void	free_files(t_fileinfo **files)
+{
+	t_fileinfo		*tmp;
+	t_fileinfo		*next;
+
+	tmp = *files;
+	while (tmp)
+	{
+		next = tmp->next;
+		free(tmp->st);
+		free(tmp->path);
+		free(tmp->filename);
+		free(tmp);
+		tmp = next;
+	}
+}
+
 void	ft_ls(t_all	*all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
@@ -309,7 +364,7 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 
 	if (!all->format)
 		all->format = (t_format*)ft_memalloc(sizeof(t_format));
-	check_ls_paths(&all->to_ls);
+	check_ls_paths(&to_ls);
 	tmp = to_ls;
 	if (tmp->next || all->options->option_R)
 		all->print_dir = 1;
@@ -323,9 +378,10 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 			output_info(tmp, all); // make this. needs to ouput all the file information correclty
 		}
 		// recurse here if we have -R
-		if (options->option_R) // for each to_ls there is a different set of files/ sub_dirs
+		if (all->options->option_R) // for each to_ls there is a different set of files/ sub_dirs
 		{
 			sub_dirs = get_sub_dirs(all->files); // make this. if no directories found return NULL. append the current full path name
+			free_files(&all->files);
 			if (sub_dirs)
 				ft_ls(all, sub_dirs); // recursion. make sure this is safe
 		}
