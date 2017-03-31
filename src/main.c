@@ -106,7 +106,7 @@ int		main(int argc, char **argv)
 	all.files = NULL;
 	get_options(argc, argv, &all); // make this. checks for options
 	if (!all.to_ls)
-		parse_directory("./", (&all.to_ls));
+		parse_directory("./", (&all.to_ls), 0);
 	ft_ls(&all, all.to_ls);
 	free(all.format);
 	free(all.options);

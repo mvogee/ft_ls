@@ -24,8 +24,7 @@ static void	add_new_file(t_fileinfo **files, struct stat *st,
 	new_file->next = NULL;
 	field_widths(all->format, new_file);
 	if (all->options->option_f)
-		all->options->option_r ? sort_nosort_rev(files, new_file) :
-									sort_nosort(files, new_file);
+		sort_nosort(files, new_file);
 	else if (all->options->option_t)
 		*files = (all->options->option_r ? sort_modtime_rev(files, new_file) :
 											sort_modtime(files, new_file));
@@ -111,7 +110,8 @@ t_to_ls 	*get_sub_dirs(t_fileinfo *files)
 	sub_dirs = NULL;
 	while (tmp)
 	{
-		if ((tmp->st->st_mode & S_IFMT) == S_IFDIR && tmp->filename[0] != '.')
+		if ((tmp->st->st_mode & S_IFMT) == S_IFDIR &&
+		!ft_strequ(tmp->filename, "..") && !ft_strequ(tmp->filename, "."))
 			add_new_dir(tmp, &sub_dirs);
 		tmp = tmp->next;
 	}

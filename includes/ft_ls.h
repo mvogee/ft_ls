@@ -95,7 +95,7 @@ void				ft_ls(t_all	*all, t_to_ls *to_ls);
 */
 
 void				parse_options(char *opt, t_options **options);
-void				parse_directory(char *file, t_to_ls	**to_ls);
+void				parse_directory(char *file, t_to_ls	**to_ls, unsigned int rev);
 void				get_options(int argc, char **argv, t_all *all);
 
 /*
@@ -147,6 +147,6 @@ t_fileinfo			*sort_default(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_reverse(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_modtime(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo		*sort_modtime_rev(t_fileinfo **files, t_fileinfo *new_file);
-void			sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file);
+//void			sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file);
 
 # endif

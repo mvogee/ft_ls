@@ -53,8 +53,7 @@ void		field_widths(t_format *format, t_fileinfo *new_file)
 		format->file_size = len;
 	format->user_min_wid = owner_width(new_file->st, format);
 	format->group_min_wid = group_width(new_file->st, format);
-	if (/*(new_file->st->st_mode & S_IFMT) == S_IFLNK || */
-		(new_file->st->st_mode & S_IFMT) == S_IFCHR ||
+	if ((new_file->st->st_mode & S_IFMT) == S_IFCHR ||
 		(new_file->st->st_mode & S_IFMT) == S_IFBLK)
 	{
 		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev >> 24)))) > format->rdev_size)

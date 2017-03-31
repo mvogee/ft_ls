@@ -128,7 +128,7 @@ static int 	compare_dates_rev(struct stat *newst, struct stat *tmpst)
 {
 	if (!newst || !tmpst)
 		return (1);
-	if (newst->st_mtime >= tmpst->st_mtime)
+	if (newst->st_mtime > tmpst->st_mtime)
 		return (1);
 	return (0);
 }
@@ -162,15 +162,11 @@ t_fileinfo	*sort_modtime_rev(t_fileinfo **files, t_fileinfo *new_file)
 	return (head);
 }
 
-void		sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file)
-{
-	t_fileinfo	*tmp;
+// void		sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file)
+// {
+// 	t_fileinfo	*tmp;
 
-	tmp = *files;
-	if (!*files)
-	{
-		*files = new_file;
-		return ;
-	}
-	new_file->next = tmp;
-}
+// 	tmp = *files;
+// 	new_file->next = tmp;
+// 	*files = new_file;
+// }

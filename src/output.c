@@ -181,7 +181,7 @@ void	output_info(t_to_ls *directory, t_all *all)
 	t_fileinfo	*tmp;
 
 	tmp = all->files;
-	if (all->print_dir)
+	if (all->print_dir && !ft_strequ(directory->name, "./"))
 		ft_printf("%s:\n", directory->name);
 	if (all->options->option_l)
 		print_blocksize(all->files, all->options);
