@@ -31,8 +31,6 @@ void			parse_options(char *opt, t_options **options)
 			(*options)->option_t = 1;
 		else if (opt[i] == 'i') // bonus. serial number
 			(*options)->option_i = 1;
-		else if (opt[i] == 'G') // bonus. collor
-			(*options)->option_G = 1;
 		else if (opt[i] == 'F') // bonus. file names followed by symbol
 			(*options)->option_F = 1;
 		else if (opt[i] == 'f') // bonus. unsorted order

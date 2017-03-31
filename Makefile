@@ -4,6 +4,9 @@ SRCS = ./src/main.c \
 		./src/parse_options.c \
 		./src/check_ls_paths.c \
 		./src/output.c \
+		./src/get_dirs_files.c \
+		./src/field_widths.c \
+		./src/list_sort.c \
 
 OBJ = $(SRC:.c=.o)
 
