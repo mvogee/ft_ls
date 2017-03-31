@@ -72,14 +72,6 @@ void	print_blocksize(t_fileinfo *files, t_options *options)
 	ft_printf("total %zu\n", total);
 }
 
-// void	output_name(t_fileinfo *file, t_options *options)
-// {
-// 	if (file->rights[0] == 'l')
-// 	{
-// 		output a link
-// 	}
-// }
-
 void	ouput_filetype(struct stat *st)
 {
 	int filetype;
@@ -149,8 +141,8 @@ void	output_user_group_names(t_format *format, struct stat *st)
 
 	pd = getpwuid(st->st_uid);
 	grp = getgrgid(st->st_gid);
-	ft_printf("%*s  ", format->user_min_wid, pd->pw_name);
-	ft_printf("%*s ", format->group_min_wid, grp->gr_name);
+	ft_printf("%-*s  ", format->user_min_wid, pd->pw_name);
+	ft_printf("%-*s ", format->group_min_wid, grp->gr_name);
 }
 
 void	follow_links(char *filepath)

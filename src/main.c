@@ -12,24 +12,13 @@
 
 #include "ft_ls.h"
 
-void	throw_error(int reason, char *bad_info)
+void	throw_error(char *bad_info)
 {
 	write(2, "ft_ls: ", 8);
-	if (reason == INVALID_OPTION)
-	{
-		write(2, "illegal option -- ", 19);
-		write(2, &bad_info[0], 1);
-		write(2, "\nusage: ls [-aRFfGilrt] [file ...]\n", 36);
-	}
-	// else if (reason == NO_FILE) // call ls if there are still files to ls
-	// {
-	// 	write(2, bad_info, ft_strlen(bad_info) + 1);
-	// 	write(2, ": No such file or directory\n", 29);
-	// }
-	// else if (reason == NO_RIGHTS)
-	// 	//print out ussage restriction message 
-
-	exit(EXIT_FAILURE); // we dont exit if there are more directories to check
+	write(2, "illegal option -- ", 19);
+	write(2, &bad_info[0], 1);
+	write(2, "\nusage: ls [-aRFfGilrt] [file ...]\n", 36);
+	exit(EXIT_FAILURE);
 }
 
 // \/___________ gets ____________ \/
@@ -60,46 +49,6 @@ int		group_width(struct stat *st, t_format *format)
 		return (width);
 	return (format->group_min_wid);
 }
-
-// char		get_extended(t_outinfo_gen *outinfo_gen)
-// {
-// 	acl_t		acl;
-// 	acl_entry_t	acl_e;
-// 	ssize_t		xattr;
-
-// 	acl = NULL;
-// 	xattr = 0;
-// 	acl = acl_get_link_np(outinfo_gen->filepath, ACL_TYPE_EXTENDED);
-// 	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &acl_e) == -1) {
-// 		acl_free(acl);
-// 		acl = NULL;
-// 	}
-// 	xattr = listxattr(outinfo_gen->filepath, NULL, 0, XATTR_NOFOLLOW);
-// 	if (xattr > 0)
-// 		return ('@');
-// 	else if (acl != NULL)
-// 		return ('+');
-// 	else
-// 		return (' ');
-// }
-
-// void		get_rights(struct stat *st, char rights[12], t_format *format)
-// {
-// 	if (!rights)
-// 		return ;
-// 	rights[0] = get_filetype(st);
-// 	rights[1] = (st->st_mode & S_IRUSR ? 'r' : '-');
-// 	rights[2] = (st->st_mode & S_IWUSR ? 'w' : '-');
-// 	rights[3] = (st->st_mode & S_IXUSR ? 'x' : '-');
-// 	rights[4] = (st->st_mode & S_IRGRP ? 'r' : '-');
-// 	rights[5] = (st->st_mode & S_IWGRP ? 'w' : '-');
-// 	rights[6] = (st->st_mode & S_IXGRP ? 'x' : '-');
-// 	rights[7] = (st->st_mode & S_IROTH ? 'r' : '-');
-// 	rights[8] = (st->st_mode & S_IWOTH ? 'w' : '-');
-// 	rights[9] = (st->st_mode & S_IXOTH ? 'x' : '-');
-// 	rights[10] = get_extended(outinfo_gen);
-// 	rights[11] = '\0';
-// }
 //    ^ _______ gets __________ ^
 
 void		field_widths(t_format *format, t_fileinfo *new_file)
@@ -285,7 +234,7 @@ t_fileinfo	*get_files_info(t_all *all, t_to_ls *to_ls)
 	dir = opendir(to_ls->name);
 	while ((dirptr = readdir(dir)))
 	{
-		to_ls->path = get_file_path(to_ls->name, dirptr->d_name); // should be good
+		to_ls->path = get_file_path(to_ls->name, dirptr->d_name);
 		st = (struct stat*)ft_memalloc(sizeof(struct stat));
 		if (lstat(to_ls->path, st) == 0)
 		{
@@ -333,7 +282,7 @@ t_to_ls *get_sub_dirs(t_fileinfo *files)
 	sub_dirs = NULL;
 	while (tmp)
 	{
-		if ((tmp->st->st_mode & S_IFMT) == S_IFDIR)
+		if ((tmp->st->st_mode & S_IFMT) == S_IFDIR && tmp->filename[0] != '.')
 			add_new_dir(tmp, &sub_dirs);
 		tmp = tmp->next;
 	}
@@ -357,6 +306,22 @@ void	free_files(t_fileinfo **files)
 	}
 }
 
+void	free_to_ls(t_to_ls **to_ls)
+{
+	t_to_ls 	*tmp;
+	t_to_ls		*next;
+	
+	tmp = *to_ls;
+	while (tmp)
+	{
+		next = tmp->next;
+		free(tmp->name);
+//		free(tmp->path);
+		free(tmp);
+		tmp = next;
+	}
+}
+
 void	ft_ls(t_all	*all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
@@ -372,23 +337,26 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 	while (tmp)
 	{
 		if (tmp->ls_file)
-			output_single_file(all, tmp); // make this
+			output_single_file(all, tmp);
 		else
 		{
-			all->files = get_files_info(all, tmp); // make this. should sort correctly as it goes. if premision is not allowed note that.
-			output_info(tmp, all); // make this. needs to ouput all the file information correclty
+			all->files = get_files_info(all, tmp);
+			output_info(tmp, all);
 		}
-		// recurse here if we have -R
-		if (all->options->option_R) // for each to_ls there is a different set of files/ sub_dirs
+		ft_printf("\n");
+		if (all->options->option_R)
 		{
-			sub_dirs = get_sub_dirs(all->files); // make this. if no directories found return NULL. append the current full path name
-			free_files(&all->files);
+			sub_dirs = get_sub_dirs(all->files);
 			if (sub_dirs)
-				ft_ls(all, sub_dirs); // recursion. make sure this is safe
+			{
+				free_files(&all->files);
+				ft_ls(all, sub_dirs); // recursion.
+			}
 		}
-		if ((tmp = tmp->next))
-			ft_printf("\n");
+		tmp = tmp->next;
+		
 	}
+	free_to_ls(&to_ls);
 }
 
 int		main(int argc, char **argv)
@@ -405,16 +373,6 @@ int		main(int argc, char **argv)
 	if (!all.to_ls)
 		parse_directory("./", (&all.to_ls));
 	ft_ls(&all, all.to_ls);
-
-// // printing stuff out
-// 	ft_printf("options\nl: %d\nR: %d\na: %d\nr: %d\nt: %d\nG: %d\ni: %d\nF: %d\n", all.options->option_l, all.options->option_R, all.options->option_a, all.options->option_r, all.options->option_t, all.options->option_G, all.options->option_i, all.options->option_F);
-// // printing directories to list
-// 	t_to_ls 	*tmp = all.to_ls;
-// 	while (tmp)
-// 	{
-// 		ft_printf("to_ls: %s\n", tmp->name);
-// 		tmp = tmp->next;
-// 	}
-	// once we have the options we need to get the files contained in the current directory
+	free(all.options);
 	return (0);
 }

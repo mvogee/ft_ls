@@ -30,13 +30,6 @@
 
 # define SIX_MONTHS 15552000
 
-typedef enum		e_errors
-{
-	INVALID_OPTION,
-	NO_FILE,
-	NO_RIGHTS
-}					t_errors;
-
 typedef struct		s_to_ls
 {
 	struct s_to_ls	*next;
@@ -92,7 +85,7 @@ typedef struct 		s_all
 ** main.c
 */
 
-void	throw_error(int reason, char *bad_info);
+void	throw_error(char *bad_info);
 
 /*
 ** parse_options.c

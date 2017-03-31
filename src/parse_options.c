@@ -43,7 +43,7 @@ void			parse_options(char *opt, t_options **options)
 		else if (opt[i] == 'n') // bonus. display user and group as number
 			(*options)->option_n = 1;
 		else
-			throw_error(INVALID_OPTION, opt + i);
+			throw_error(opt + i);
 		i++;
 	}
 }
@@ -80,7 +80,7 @@ void			parse_directory(char *file, t_to_ls	**to_ls)
 	t_to_ls		*new;
 
 	new = (t_to_ls*)ft_memalloc(sizeof(t_to_ls));
-	new->name = file;
+	new->name = ft_strdup(file);
 	new->next = NULL;
 	if (!(*to_ls))
 		*to_ls = new;

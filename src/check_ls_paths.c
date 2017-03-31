@@ -58,6 +58,4 @@ void			check_ls_paths(t_to_ls **to_ls) // this clears file paths >;(
 			closedir(d);
 		tmp = next;
 	}
-	// if (!(*to_ls))
-	// 	exit(EXIT_FAILURE);
 }
