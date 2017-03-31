@@ -163,14 +163,9 @@ void	follow_links(char *filepath)
 
 void	output_size_or_sys(t_format *format, struct stat *st)
 {
-	if ((st->st_mode & S_IFMT) == S_IFLNK ||
-		(st->st_mode & S_IFMT) == S_IFCHR ||
-		(st->st_mode & S_IFMT) == S_IFBLK)
+	if ((st->st_mode & S_IFMT) == S_IFCHR || (st->st_mode & S_IFMT) == S_IFBLK)
 	{
-		if ((st->st_mode & S_IFMT) == S_IFLNK)
-			ft_printf("%*s%*s", format->rdev_size, "", format->rdev2_size, "");
-		else
-			ft_printf("  %*d,", format->rdev_size, st->st_rdev >> 24);
+		ft_printf("  %*d,", format->rdev_size, st->st_rdev >> 24);
 		ft_printf(" %*d ", format->rdev2_size, st->st_rdev & 0xFFFFFF);
 	}
 	else
@@ -208,7 +203,7 @@ void	output_info(t_to_ls *directory, t_all *all)
 		ft_printf("%s", tmp->filename);
 		if (all->options->option_F)
 			output_file_symbol(tmp->st, tmp->filename);
-		if (((tmp->st->st_mode & S_IFMT) == S_IFLNK))
+		if (((tmp->st->st_mode & S_IFMT) == S_IFLNK) && all->options->option_l)
 			follow_links(tmp->path);
 		tmp = tmp->next;
 		ft_printf("\n");
@@ -228,7 +223,7 @@ void	output_single_file(t_all *all, t_to_ls *file)
 			output_premissions(&st, file->name);
 			ft_printf(" %*d ", all->format->links_min_wid, st.st_nlink);
 			if (!all->options->option_n)
-				output_user_group_names(all->format, &st); // done
+				output_user_group_names(all->format, &st);
 			else
 				ft_printf("%*d  %*d ",  all->format->user_min_wid, st.st_uid, all->format->group_min_wid, st.st_gid);
 			output_size_or_sys(all->format, &st);

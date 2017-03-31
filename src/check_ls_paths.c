@@ -29,6 +29,8 @@ static t_to_ls	*bad_path(t_to_ls **to_ls, t_to_ls *bad_path)
 			prev = prev->next;
 		prev->next = bad_path->next;
 	}
+	free(bad_path->name);
+	free(bad_path->path);
 	free(bad_path);
 	return (head);
 }

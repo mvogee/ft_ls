@@ -123,3 +123,54 @@ t_fileinfo	*sort_modtime(t_fileinfo **files, t_fileinfo *new_file)
 	}
 	return (head);
 }
+
+static int 	compare_dates_rev(struct stat *newst, struct stat *tmpst)
+{
+	if (!newst || !tmpst)
+		return (1);
+	if (newst->st_mtime >= tmpst->st_mtime)
+		return (1);
+	return (0);
+}
+
+t_fileinfo	*sort_modtime_rev(t_fileinfo **files, t_fileinfo *new_file)
+{
+	t_fileinfo	*tmp;
+	t_fileinfo	*head;
+	t_fileinfo	*prev;
+
+	tmp = *files;
+	head = *files;
+	prev = NULL;
+	if (!*files)
+		return (new_file);
+	while (tmp && compare_dates_rev(new_file->st, tmp->st) > 0)
+	{
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	if (!prev)
+	{
+		head = new_file;
+		new_file->next = tmp;
+	}
+	else
+	{
+		prev->next = new_file;
+		new_file->next = tmp;
+	}
+	return (head);
+}
+
+void		sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file)
+{
+	t_fileinfo	*tmp;
+
+	tmp = *files;
+	if (!*files)
+	{
+		*files = new_file;
+		return ;
+	}
+	new_file->next = tmp;
+}

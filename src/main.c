@@ -36,6 +36,7 @@ void	free_files(t_fileinfo **files)
 		free(tmp);
 		tmp = next;
 	}
+	*files = NULL;
 }
 
 void	free_to_ls(t_to_ls **to_ls)
@@ -48,7 +49,7 @@ void	free_to_ls(t_to_ls **to_ls)
 	{
 		next = tmp->next;
 		free(tmp->name);
-		free(tmp->path); // this only causes double free when recursive
+		free(tmp->path);
 		free(tmp);
 		tmp = next;
 	}
@@ -88,6 +89,8 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 		if ((tmp = tmp->next))
 			ft_printf("\n");
 	}
+	if (all->files)
+		free_files(&all->files);
 	free_to_ls(&to_ls);
 }
 
@@ -105,6 +108,8 @@ int		main(int argc, char **argv)
 	if (!all.to_ls)
 		parse_directory("./", (&all.to_ls));
 	ft_ls(&all, all.to_ls);
+	free(all.format);
 	free(all.options);
+	free_files(&all.files);
 	return (0);
 }

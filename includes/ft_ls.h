@@ -38,8 +38,8 @@ typedef struct		s_to_ls
 	unsigned int ls_file : 1;
 }					t_to_ls;
 
-typedef struct 		s_format // to be used for all outputting for minimum width for respecive fields
-{ // set each of these to the largest for each ouput set
+typedef struct 		s_format
+{
 	int				serial_min_wid;
 	int				links_min_wid;
 	int				user_min_wid;
@@ -139,12 +139,14 @@ void				field_widths(t_format *format, t_fileinfo *new_file);
 
 /*
 ** list_sort.c
-** 1 static
+** 2 static
 */
 
 void				sort_nosort(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_default(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_reverse(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_modtime(t_fileinfo **files, t_fileinfo *new_file);
+t_fileinfo		*sort_modtime_rev(t_fileinfo **files, t_fileinfo *new_file);
+void			sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file);
 
 # endif

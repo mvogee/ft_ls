@@ -19,18 +19,20 @@ static void	add_new_file(t_fileinfo **files, struct stat *st,
 
 	new_file = (t_fileinfo*)ft_memalloc(sizeof(t_fileinfo));
 	new_file->st = st;
-	new_file->filename = ft_strdup(all->filename); // this is now allocated memmory
-	new_file->path = ft_strdup(to_ls->path); // this is allocated memmory in to_ls
+	new_file->filename = ft_strdup(all->filename);
+	new_file->path = ft_strdup(to_ls->path);
 	new_file->next = NULL;
 	field_widths(all->format, new_file);
 	if (all->options->option_f)
-		sort_nosort(files, new_file); // made
+		all->options->option_r ? sort_nosort_rev(files, new_file) :
+									sort_nosort(files, new_file);
 	else if (all->options->option_t)
-		*files = sort_modtime(files, new_file); // made
+		*files = (all->options->option_r ? sort_modtime_rev(files, new_file) :
+											sort_modtime(files, new_file));
 	else if (all->options->option_r)
-		*files = sort_reverse(files, new_file); // made
+		*files = sort_reverse(files, new_file);
 	else
-		*files = sort_default(files, new_file); // made
+		*files = sort_default(files, new_file);
 }
 
 char		*get_file_path(char *filefrom, char *d_name)
