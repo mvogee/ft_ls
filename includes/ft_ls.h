@@ -59,13 +59,13 @@ typedef struct		s_fileinfo
 
 typedef struct		s_options
 {
-	unsigned int option_R : 1; // recrusive listing
+	unsigned int option_up_r : 1; // recrusive listing
 	unsigned int option_l : 1; // extended info
 	unsigned int option_a : 1; // include hidden files
 	unsigned int option_r : 1; // reverse order
 	unsigned int option_t : 1; // mod time sort
 	unsigned int option_i : 1; // bonus serial number
-	unsigned int option_F : 1; // bonus file names followed by symbol
+	unsigned int option_up_f : 1; // bonus file names followed by symbol
 	unsigned int option_f : 1; // bonus unsorted order
 	unsigned int option_n : 1; // bonus display user and group as number
 }					t_options;
@@ -91,12 +91,17 @@ void				ft_ls(t_all	*all, t_to_ls *to_ls);
 
 /*
 ** parse_options.c
-** 1 static
+** 2 static
 */
 
-void				parse_options(char *opt, t_options **options);
-void				parse_directory(char *file, t_to_ls	**to_ls, unsigned int rev);
 void				get_options(int argc, char **argv, t_all *all);
+
+/*
+** parse_directory
+** 2 static
+*/
+
+void				parse_directory(char *file, t_to_ls	**to_ls, unsigned int rev);
 
 /*
 ** check_ls_paths.c
@@ -139,14 +144,21 @@ void				field_widths(t_format *format, t_fileinfo *new_file);
 
 /*
 ** list_sort.c
-** 2 static
+** 1 static
 */
 
 void				sort_nosort(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_default(t_fileinfo **files, t_fileinfo *new_file);
-t_fileinfo			*sort_reverse(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo			*sort_modtime(t_fileinfo **files, t_fileinfo *new_file);
+
+
+/*
+** list_sort_rev.c
+** 1 static
+*/
+
+t_fileinfo			*sort_reverse(t_fileinfo **files, t_fileinfo *new_file);
 t_fileinfo		*sort_modtime_rev(t_fileinfo **files, t_fileinfo *new_file);
-//void			sort_nosort_rev(t_fileinfo **files, t_fileinfo *new_file);
+
 
 # endif

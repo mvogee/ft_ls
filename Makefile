@@ -7,6 +7,8 @@ SRCS = ./src/main.c \
 		./src/get_dirs_files.c \
 		./src/field_widths.c \
 		./src/list_sort.c \
+		./src/list_sort_rev.c \
+		./src/parse_directory.c \
 
 OBJ = $(SRC:.c=.o)
 

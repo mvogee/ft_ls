@@ -176,6 +176,18 @@ void	output_size_or_sys(t_format *format, struct stat *st)
 	}
 }
 
+void	extended_output_l(t_fileinfo *tmp, t_all *all)
+{
+	output_premissions(tmp->st, tmp->path);
+	ft_printf(" %*d ", all->format->links_min_wid, tmp->st->st_nlink);
+	if (!all->options->option_n)
+		output_user_group_names(all->format, tmp->st);
+	else
+	ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid, all->format->group_min_wid, tmp->st->st_gid);
+	output_size_or_sys(all->format, tmp->st);
+	output_date(tmp->st);	
+}
+
 void	output_info(t_to_ls *directory, t_all *all)
 {
 	t_fileinfo	*tmp;
@@ -190,18 +202,9 @@ void	output_info(t_to_ls *directory, t_all *all)
 		if (all->options->option_i)
 			ft_printf("%*llu ", all->format->serial_min_wid ,tmp->st->st_ino);
 		if (all->options->option_l)
-		{
-			output_premissions(tmp->st, tmp->path);
-			ft_printf(" %*d ", all->format->links_min_wid, tmp->st->st_nlink);
-			if (!all->options->option_n)
-				output_user_group_names(all->format, tmp->st);
-			else
-				ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid, all->format->group_min_wid, tmp->st->st_gid);
-			output_size_or_sys(all->format, tmp->st);
-			output_date(tmp->st);
-		}
+			extended_output_l(tmp, all);
 		ft_printf("%s", tmp->filename);
-		if (all->options->option_F)
+		if (all->options->option_up_f)
 			output_file_symbol(tmp->st, tmp->filename);
 		if (((tmp->st->st_mode & S_IFMT) == S_IFLNK) && all->options->option_l)
 			follow_links(tmp->path);
@@ -230,7 +233,7 @@ void	output_single_file(t_all *all, t_to_ls *file)
 			output_date(&st);
 		}
 		ft_printf("%s", file->name);
-		if (all->options->option_F)
+		if (all->options->option_up_f)
 			output_file_symbol(&st, file->name);
 		if (((st.st_mode & S_IFMT) == S_IFLNK))
 			follow_links(file->name);

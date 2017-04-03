@@ -65,7 +65,7 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 	check_ls_paths(&to_ls);
 	if (!(tmp = to_ls))
 		return ;
-	if (tmp->next || all->options->option_R)
+	if (tmp->next || all->options->option_up_r)
 		all->print_dir = 1;
 	while (tmp)
 	{
@@ -76,7 +76,7 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 			all->files = get_files_info(all, tmp);
 			output_info(tmp, all);
 		}
-		if (all->options->option_R)
+		if (all->options->option_up_r)
 		{
 			sub_dirs = get_sub_dirs(all->files);
 			if (sub_dirs)
