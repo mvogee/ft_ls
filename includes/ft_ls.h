@@ -85,8 +85,7 @@ typedef struct 			s_all
 */
 
 void					throw_error(char *bad_info);
-void					free_files(t_fileinfo **files);
-void					free_to_ls(t_to_ls **to_ls);
+void					recursive(t_all *all);
 void					ft_ls(t_all	*all, t_to_ls *to_ls);
 
 /*
@@ -176,5 +175,12 @@ t_fileinfo				*sort_reverse(t_fileinfo **files,
 										t_fileinfo *new_file);
 t_fileinfo				*sort_modtime_rev(t_fileinfo **files,
 										t_fileinfo *new_file);
+
+/*
+** freeing.c
+*/
+
+void					free_files(t_fileinfo **files);
+void					free_to_ls(t_to_ls **to_ls);
 
 # endif

@@ -14,8 +14,8 @@
 
 void	follow_links(char *filepath)
 {
-	char	link_buf[1024];
-	ssize_t	count;
+	char			link_buf[1024];
+	ssize_t			count;
 
 	ft_bzero(link_buf, sizeof(link_buf));
 	count = readlink(filepath, link_buf, sizeof(link_buf));
@@ -38,7 +38,8 @@ void	output_size_or_sys(t_format *format, struct stat *st)
 	else
 	{
 		if (format->rdev_size > 0 || format->rdev2_size > 0)
-			ft_printf("  %*s%*s", format->rdev_size, "", format->rdev2_size, "");
+			ft_printf("  %*s%*s", format->rdev_size, "",
+									format->rdev2_size, "");
 		ft_printf(" %*lld ", format->file_size, st->st_size);
 	}
 }
@@ -50,14 +51,15 @@ void	extended_output_l(t_fileinfo *tmp, t_all *all)
 	if (!all->options->option_n)
 		output_user_group_names(all->format, tmp->st);
 	else
-	ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid, all->format->group_min_wid, tmp->st->st_gid);
+	ft_printf("%*d  %*d ",  all->format->user_min_wid, tmp->st->st_uid,
+							all->format->group_min_wid, tmp->st->st_gid);
 	output_size_or_sys(all->format, tmp->st);
-	output_date(tmp->st);	
+	output_date(tmp->st);
 }
 
 void	output_info(t_to_ls *directory, t_all *all)
 {
-	t_fileinfo	*tmp;
+	t_fileinfo		*tmp;
 
 	tmp = all->files;
 	if (all->print_dir && !ft_strequ(directory->name, "./"))
@@ -82,7 +84,7 @@ void	output_info(t_to_ls *directory, t_all *all)
 
 void	output_single_file(t_all *all, t_to_ls *file)
 {
-	struct stat st;
+	struct stat		st;
 
 	if (lstat(file->name, &st) == 0)
 	{
@@ -95,7 +97,8 @@ void	output_single_file(t_all *all, t_to_ls *file)
 			if (!all->options->option_n)
 				output_user_group_names(all->format, &st);
 			else
-				ft_printf("%*d  %*d ",  all->format->user_min_wid, st.st_uid, all->format->group_min_wid, st.st_gid);
+				ft_printf("%*d  %*d ",  all->format->user_min_wid, st.st_uid,
+										all->format->group_min_wid, st.st_gid);
 			output_size_or_sys(all->format, &st);
 			output_date(&st);
 		}

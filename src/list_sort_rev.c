@@ -12,7 +12,6 @@
 
 #include "ft_ls.h"
 
-
 static int 	compare_dates_rev(struct stat *newst, struct stat *tmpst)
 {
 	if (!newst || !tmpst)

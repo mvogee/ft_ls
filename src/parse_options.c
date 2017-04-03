@@ -29,7 +29,7 @@ static	void	parse_options_bonus(char *opt, t_options **options, int i)
 		throw_error(opt + i);
 }
 
-static void			parse_options(char *opt, t_options **options)
+static void		parse_options(char *opt, t_options **options)
 {
 	int			i;
 
@@ -49,7 +49,7 @@ static void			parse_options(char *opt, t_options **options)
 		else
 			parse_options_bonus(opt, options, i);
 		i++;
-	}		
+	}
 }
 
 

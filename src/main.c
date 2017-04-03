@@ -14,58 +14,34 @@
 
 void	throw_error(char *bad_info)
 {
-	write(2, "ft_ls: ", 8);
-	write(2, "illegal option -- ", 19);
+	write(2, "ft_ls: illegal option -- ", 26);
 	write(2, &bad_info[0], 1);
-	write(2, "\nusage: ls [-aRFfGilrt] [file ...]\n", 36);
+	write(2, "\nusage: ls [-aRFfilrt] [file ...]\n", 35);
 	exit(EXIT_FAILURE);
 }
 
-void	free_files(t_fileinfo **files)
+void	recursive(t_all *all)
 {
-	t_fileinfo		*tmp;
-	t_fileinfo		*next;
+	t_to_ls			*sub_dirs;
 
-	tmp = *files;
-	while (tmp)
+	sub_dirs = get_sub_dirs(all->files);
+	if (sub_dirs)
 	{
-		next = tmp->next;
-		free(tmp->st);
-		free(tmp->path);
-		free(tmp->filename);
-		free(tmp);
-		tmp = next;
-	}
-	*files = NULL;
-}
-
-void	free_to_ls(t_to_ls **to_ls)
-{
-	t_to_ls 	*tmp;
-	t_to_ls		*next;
-	
-	tmp = *to_ls;
-	while (tmp)
-	{
-		next = tmp->next;
-		free(tmp->name);
-		free(tmp->path);
-		free(tmp);
-		tmp = next;
+		ft_printf("\n");
+		free_files(&all->files);
+		ft_ls(all, sub_dirs); // recursion.
 	}
 }
 
 void	ft_ls(t_all	*all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
-	t_to_ls			*sub_dirs;
 
+	tmp = to_ls;
 	if (!all->format)
 		all->format = (t_format*)ft_memalloc(sizeof(t_format));
 	check_ls_paths(&to_ls);
-	if (!(tmp = to_ls))
-		return ;
-	if (tmp->next || all->options->option_up_r)
+	if (tmp && (tmp->next || all->options->option_up_r))
 		all->print_dir = 1;
 	while (tmp)
 	{
@@ -77,15 +53,7 @@ void	ft_ls(t_all	*all, t_to_ls *to_ls)
 			output_info(tmp, all);
 		}
 		if (all->options->option_up_r)
-		{
-			sub_dirs = get_sub_dirs(all->files);
-			if (sub_dirs)
-			{
-				ft_printf("\n");
-				free_files(&all->files);
-				ft_ls(all, sub_dirs); // recursion.
-			}
-		}
+			recursive(all);
 		if ((tmp = tmp->next))
 			ft_printf("\n");
 	}

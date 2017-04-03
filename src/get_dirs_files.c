@@ -36,8 +36,8 @@ static void	add_new_file(t_fileinfo **files, struct stat *st,
 
 char		*get_file_path(char *filefrom, char *d_name)
 {
-	char	*tmp;
-	char	*ret;
+	char			*tmp;
+	char			*ret;
 
 	if (filefrom[ft_strlen(filefrom) - 1] == '/')
 		ret = ft_strjoin(filefrom, d_name);

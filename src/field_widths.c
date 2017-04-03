@@ -12,7 +12,6 @@
 
 #include "ft_ls.h"
 
-
 static int	owner_width(struct stat *st, t_format *format)
 {
 	char			*owner;
@@ -45,9 +44,11 @@ void		field_widths(t_format *format, t_fileinfo *new_file)
 {
 	int				len;
 
-	if ((len = ft_strlen(ft_lltoa((long long)new_file->st->st_ino))) > format->serial_min_wid)
+	if ((len = ft_strlen(ft_lltoa((long long)new_file->st->st_ino))) >
+												format->serial_min_wid)
 		format->serial_min_wid = len;
-	if ((len = ft_strlen(ft_itoa(new_file->st->st_nlink))) > format->links_min_wid)
+	if ((len = ft_strlen(ft_itoa(new_file->st->st_nlink))) >
+												format->links_min_wid)
 		format->links_min_wid = len;
 	if ((len = ft_strlen(ft_lltoa(new_file->st->st_size))) > format->file_size)
 		format->file_size = len;
@@ -56,9 +57,11 @@ void		field_widths(t_format *format, t_fileinfo *new_file)
 	if ((new_file->st->st_mode & S_IFMT) == S_IFCHR ||
 		(new_file->st->st_mode & S_IFMT) == S_IFBLK)
 	{
-		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev >> 24)))) > format->rdev_size)
+		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev >> 24)))) >
+														format->rdev_size)
 			format->rdev_size = len;
-		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev & 0xFFFFFF)))) > format->rdev2_size)
+		if ((len = ft_strlen(ft_itoa((new_file->st->st_rdev & 0xFFFFFF)))) >
+														format->rdev2_size)
 			format->rdev2_size = len;
 	}
 }

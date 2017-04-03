@@ -11,6 +11,7 @@ SRCS = ./src/main.c \
 		./src/list_sort.c \
 		./src/list_sort_rev.c \
 		./src/parse_directory.c \
+		./src/freeing.c \
 
 OBJ = $(SRC:.c=.o)
 

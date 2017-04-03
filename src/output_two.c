@@ -14,10 +14,10 @@
 
 void	output_date(struct stat *st)
 {
-	time_t	curtime;
-	char	*filetime;
-	char	*p2;
-	int 	time_or_year;
+	time_t		curtime;
+	char		*filetime;
+	char		*p2;
+	int			time_or_year;
 
 	time_or_year = 0;
 	curtime = time(NULL);

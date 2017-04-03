@@ -14,7 +14,7 @@
 
 void	ouput_filetype(struct stat *st)
 {
-	int filetype;
+	int				filetype;
 
 	filetype = st->st_mode & S_IFMT;
 	if (filetype == S_IFREG)
@@ -37,9 +37,9 @@ void	ouput_filetype(struct stat *st)
 
 void	output_extended(char *path)
 {
-	acl_t		acl;
-	acl_entry_t	acl_e;
-	ssize_t		xattr;
+	acl_t			acl;
+	acl_entry_t		acl_e;
+	ssize_t			xattr;
 
 	acl = NULL;
 	xattr = 0;
