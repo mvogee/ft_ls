@@ -12,7 +12,6 @@
 
 #include "ft_ls.h"
 
-
 void		sort_nosort(t_fileinfo **files, t_fileinfo *new_file)
 {
 	t_fileinfo	*tmp;
@@ -57,11 +56,18 @@ t_fileinfo	*sort_default(t_fileinfo **files, t_fileinfo *new_file)
 	return (head);
 }
 
-static int 	compare_dates(struct stat *newst, struct stat *tmpst)
+static int	compare_dates(t_fileinfo *new_file, t_fileinfo *tmp)
 {
-	if (!newst || !tmpst)
+	if (!new_file->st || !tmp->st)
 		return (1);
-	if (newst->st_mtime <= tmpst->st_mtime)
+	if (new_file->st->st_mtime < tmp->st->st_mtime)
+		return (1);
+	if (new_file->st->st_mtime == tmp->st->st_mtime &&
+		new_file->st->st_mtimespec.tv_nsec < tmp->st->st_mtimespec.tv_nsec)
+		return (1);
+	if (new_file->st->st_mtime == tmp->st->st_mtime &&
+		new_file->st->st_mtimespec.tv_nsec == tmp->st->st_mtimespec.tv_nsec &&
+		ft_strcmp(tmp->filename, new_file->filename) < 0)
 		return (1);
 	return (0);
 }
@@ -77,7 +83,7 @@ t_fileinfo	*sort_modtime(t_fileinfo **files, t_fileinfo *new_file)
 	prev = NULL;
 	if (!*files)
 		return (new_file);
-	while (tmp && compare_dates(new_file->st, tmp->st) > 0)
+	while (tmp && compare_dates(new_file, tmp) > 0)
 	{
 		prev = tmp;
 		tmp = tmp->next;

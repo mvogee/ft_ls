@@ -66,7 +66,7 @@ static t_to_ls	*add_new_rev(t_to_ls **to_ls, t_to_ls *new)
 	return (head);
 }
 
-void			parse_directory(char *file, t_to_ls	**to_ls, unsigned int rev)
+void			parse_directory(char *file, t_to_ls **to_ls, unsigned int rev)
 {
 	t_to_ls		*new;
 

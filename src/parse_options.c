@@ -52,7 +52,6 @@ static void		parse_options(char *opt, t_options **options)
 	}
 }
 
-
 void			get_options(int argc, char **argv, t_all *all)
 {
 	int			count;

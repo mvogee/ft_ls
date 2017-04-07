@@ -29,33 +29,39 @@ void	recursive(t_all *all)
 	{
 		ft_printf("\n");
 		free_files(&all->files);
-		ft_ls(all, sub_dirs); // recursion.
+		ft_ls(all, sub_dirs);
 	}
 }
 
-void	ft_ls(t_all	*all, t_to_ls *to_ls)
+void	finish_singles(t_all *all)
+{
+	free_singles(&all->singles);
+	all->print_dir = 1;
+	ft_printf("\n");
+}
+
+void	ft_ls(t_all *all, t_to_ls *to_ls)
 {
 	t_to_ls			*tmp;
 
 	if (!all->format)
 		all->format = (t_format*)ft_memalloc(sizeof(t_format));
-	check_ls_paths(&to_ls);
+	check_ls_paths(&to_ls, &all->singles);
 	tmp = to_ls;
 	if (tmp && (tmp->next || all->options->option_up_r))
 		all->print_dir = 1;
+	output_single_files(all, &all->singles);
 	while (tmp)
 	{
-		if (tmp->ls_file)
-			output_single_file(all, tmp);
-		else
-		{
-			all->files = get_files_info(all, tmp);
-			output_info(tmp, all);
-		}
+		if (all->singles)
+			finish_singles(all);
+		all->files = get_files_info(all, tmp);
+		output_info(tmp, all);
 		if (all->options->option_up_r)
 			recursive(all);
-		if ((tmp = tmp->next))
+		if (tmp->next)
 			ft_printf("\n");
+		tmp = tmp->next;
 	}
 	if (all->files)
 		free_files(&all->files);
@@ -72,7 +78,7 @@ int		main(int argc, char **argv)
 		return (0);
 	all.to_ls = NULL;
 	all.files = NULL;
-	get_options(argc, argv, &all); // make this. checks for options
+	get_options(argc, argv, &all);
 	if (!all.to_ls)
 		parse_directory("./", (&all.to_ls), 0);
 	ft_ls(&all, all.to_ls);

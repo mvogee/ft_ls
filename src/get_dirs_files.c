@@ -95,13 +95,13 @@ static void	add_new_dir(t_fileinfo *dir, t_to_ls **sub_dirs)
 		*sub_dirs = new_dir;
 	else
 	{
-		while(tmp->next)
+		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = new_dir;
 	}
 }
 
-t_to_ls 	*get_sub_dirs(t_fileinfo *files)
+t_to_ls		*get_sub_dirs(t_fileinfo *files)
 {
 	t_to_ls			*sub_dirs;
 	t_fileinfo		*tmp;

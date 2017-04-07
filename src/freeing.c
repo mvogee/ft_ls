@@ -34,7 +34,7 @@ void	free_to_ls(t_to_ls **to_ls)
 {
 	t_to_ls		*tmp;
 	t_to_ls		*next;
-	
+
 	tmp = *to_ls;
 	while (tmp)
 	{
@@ -44,4 +44,20 @@ void	free_to_ls(t_to_ls **to_ls)
 		free(tmp);
 		tmp = next;
 	}
+}
+
+void	free_singles(t_single **singles)
+{
+	t_single	*tmp;
+	t_single	*next;
+
+	tmp = *singles;
+	while (tmp)
+	{
+		next = tmp->next;
+		free(tmp->name);
+		free(tmp);
+		tmp = next;
+	}
+	*singles = NULL;
 }

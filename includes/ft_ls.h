@@ -35,10 +35,9 @@ typedef struct			s_to_ls
 	struct s_to_ls		*next;
 	char				*path;
 	char				*name;
-	unsigned int		ls_file : 1;
 }						t_to_ls;
 
-typedef struct 			s_format
+typedef struct			s_format
 {
 	int					serial_min_wid;
 	int					links_min_wid;
@@ -57,6 +56,12 @@ typedef struct			s_fileinfo
 	char				*path;
 }						t_fileinfo;
 
+typedef struct			s_single
+{
+	struct s_single		*next;
+	char				*name;
+}						t_single;
+
 typedef struct			s_options
 {
 	unsigned int		option_up_r : 1;
@@ -70,8 +75,9 @@ typedef struct			s_options
 	unsigned int		option_n : 1;
 }						t_options;
 
-typedef struct 			s_all
+typedef struct			s_all
 {
+	t_single			*singles;
 	t_fileinfo			*files;
 	t_to_ls				*to_ls;
 	t_options			*options;
@@ -105,10 +111,10 @@ void					parse_directory(char *file,
 
 /*
 ** check_ls_paths.c
-** 1 static
+** 2 statics
 */
 
-void					check_ls_paths(t_to_ls **to_ls);
+void					check_ls_paths(t_to_ls **to_ls, t_single **singles);
 
 /*
 ** output.c
@@ -118,7 +124,6 @@ void					extended_output_l(t_fileinfo *tmp, t_all *all);
 void					follow_links(char *filepath);
 void					output_size_or_sys(t_format *format, struct stat *st);
 void					output_info(t_to_ls *directory, t_all *all);
-void					output_single_file(t_all *all, t_to_ls *file);
 
 /*
 ** output_two.c
@@ -127,6 +132,8 @@ void					output_single_file(t_all *all, t_to_ls *file);
 void					output_date(struct stat *st);
 void					output_file_symbol(struct stat *st, char *filename);
 void					print_blocksize(t_fileinfo *files, t_options *options);
+void					output_single_files(t_all *all, t_single **singles);
+void					output_single_file(t_all *all, char *file);
 
 /*
 ** output_three.c
@@ -165,7 +172,6 @@ t_fileinfo				*sort_default(t_fileinfo **files,
 t_fileinfo				*sort_modtime(t_fileinfo **files,
 										t_fileinfo *new_file);
 
-
 /*
 ** list_sort_rev.c
 ** 1 static
@@ -182,5 +188,6 @@ t_fileinfo				*sort_modtime_rev(t_fileinfo **files,
 
 void					free_files(t_fileinfo **files);
 void					free_to_ls(t_to_ls **to_ls);
+void					free_singles(t_single **singles);
 
-# endif
+#endif

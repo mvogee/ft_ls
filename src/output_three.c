@@ -51,7 +51,7 @@ void	output_extended(char *path)
 	}
 	xattr = listxattr(path, NULL, 0, XATTR_NOFOLLOW);
 	if (xattr > 0)
-		write (1, "@", 1);
+		write(1, "@", 1);
 	else if (acl != NULL)
 		write(1, "+", 1);
 	else
